@@ -1,0 +1,6 @@
+# Dependencies
+node_modules
+
+# Firebase
+firebase-debug.log
+functions/node_modules

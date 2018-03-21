@@ -1,0 +1,77 @@
+// yes, this file supports comments :)
+
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "games": {
+      "$gameid": {
+        // everyone who knows the gameid can view the game
+        ".read": true,
+
+        // a new game also needs to set the creator
+        ".validate": "newData.hasChild('creator')",
+        "questions": {
+          "$qid": {
+            // only allow to create new questions by the creator
+            "question": {
+	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()"
+            },
+
+            "guesses": {
+              "$uid": {
+		            // allow to write own answeres as long as the question isn't finished                
+                "guess": {
+	                ".write": "auth.uid === $uid && !data.exists() && !data.parent().parent().parent().child('finished').exists()",
+                  ".validate": "newData.isString()",
+                },
+                
+                // the creator is trusted with checking the amount
+                "amount": {
+                  ".write": "auth.uid === data.parent().parent().parent().parent().child('creator').val() && !data.exists()",
+                  ".validate": "newData.isNumber()"
+                }
+              }
+            },
+
+            // the question can only be ended by the creator
+            "finished": {
+              ".write": "!data.exists() && auth.uid == data.parent().parent().child('creator').val()",
+              ".validate": "newData.val() === true"
+            },
+
+            // no other data
+            "$any": {
+              ".validate": false
+            }
+          }
+        },
+
+        // players can set there own name
+        "players": {
+          "$uid": {
+            ".write": "auth.uid === $uid && !data.parent().parent().child('finished').exists()",
+            ".validate": "newData.isString()"
+          }
+        },
+
+        // the creator is always the uid of the player that created the game and can't be changed
+        "creator": {
+          ".write": "!data.exists()",
+          ".validate": "newData.val() == auth.uid"
+        },
+        
+        // the creator can end the game
+        "finished": {
+          ".write": "auth.uid === data.parent().child('creator').val() && !data.exists()",
+          ".validate": "newData.val() === true"
+        },
+
+        // no other data
+        "$any": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
