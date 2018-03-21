@@ -1,5 +1,17 @@
 // yes, this file supports comments :)
 
+/**
+ * The database rules in a nutshell
+ * 
+ * 1. some user creates a game -> this user is the creator
+ * 2. all players can add themself to the players ref and set there name there
+ * 3. the creator creates a new question
+ * 4. all players answer the question
+ * 5. the creator checks the count for all players and writes the result into the database
+ * 6. the creator "finishes" the question and creates a new one, after this noone can edit the results of the old question
+ * 7. the creator "finishes" the game and nothing can be edit anymore
+ */
+
 {
   "rules": {
     ".read": false,
@@ -20,7 +32,7 @@
 
             "guesses": {
               "$uid": {
-		            // allow to write own answeres as long as the question isn't finished                
+                // allow to write own answeres as long as the question isn't finished                
                 "guess": {
 	                ".write": "auth.uid === $uid && !data.exists() && !data.parent().parent().parent().child('finished').exists()",
                   ".validate": "newData.isString()",
@@ -28,7 +40,7 @@
                 
                 // the creator is trusted with checking the amount
                 "amount": {
-                  ".write": "auth.uid === data.parent().parent().parent().parent().child('creator').val() && !data.exists()",
+                  ".write": "auth.uid === data.parent().parent().parent().parent().parent().child('creator').val() && !data.exists()",
                   ".validate": "newData.isNumber()"
                 }
               }
