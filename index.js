@@ -6,12 +6,14 @@ const db = firebase.database();
 const auth = firebase.auth();
 
 const gamesRef = db.ref('games');
+const NUM_WIN_ROUNDS = 10;
 
 const state = {
   // the current game currently only set by createNewGame()
   game: {},
   page: 'index',
   players: [],
+  rounds: 0,
   isCreator: () => state.user.uid === game.creator
 }
 
@@ -22,6 +24,7 @@ function createNewGame(user) {
   const ref = gamesRef.push()
   ref.child('creator').set(user.uid);
   hackLastQuestion = 0;
+  state.rounds = 0;
   state.user.updateProfile({ displayName: '' })
   createNewQuestion(ref);
   return ref;
@@ -99,7 +102,10 @@ function createGameListener(gameRef) {
 
   gameRef.child('questions').on('child_added', snap => {
     if (state.page === 'leaderboard')
+    {
+      ++state.rounds;
       state.page = 'question';
+    }
 
     state.game.questions[snap.key] = snap.val();
     createQuestionListeners(snap.ref, snap.key);
@@ -279,7 +285,7 @@ var hackLastQuestion = 0;
 const winTemplate = (state) => html`
 <h1>${Object.values(state.game.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
 <img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
-<div class="button" on-click=${(e) => { state.page = 'index'; }}>New game</div>`
+<div class="button" on-click=${(e) => { state.page = 'index'; rerender(); }}>New game</div>`
 
 const leaderboardTemplate = state => {
   let rdy = true;
@@ -329,10 +335,16 @@ if (!rdy)
     </tbody>
 </table>
 <div class="button" on-click=${(e) => {
-  state.page = 'question';
-  
-  if (state.isCreator) {
-    createNewQuestion(gamesRef.child(state.game.id))
+  ++state.rounds;
+  if (state.rounds >= NUM_WIN_ROUNDS)
+    state.page = 'win';
+  else
+  {
+    state.page = 'question';
+    
+    if (state.isCreator) {
+      createNewQuestion(gamesRef.child(state.game.id))
+    }
   }
 
   rerender()
