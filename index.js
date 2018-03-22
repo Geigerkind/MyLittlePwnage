@@ -21,7 +21,7 @@ const state = {
 function createNewGame(user) {
   const ref = gamesRef.push()
   ref.child('creator').set(user.uid);
-
+  hackLastQuestion = 0;
   createNewQuestion(ref);
   return ref;
 }
@@ -43,6 +43,10 @@ function addPlayerToGame(gameRef, player) {
 
 function answerQuestion(questionRef, user, answer) {
   questionRef.child('guesses').child(user.uid).child('guess').set(answer);
+}
+
+function playerReady(questionRef, user) {
+  questionRef.child('guesses').child(user.uid).child('ready').set(42);
 }
 
 /**
@@ -93,6 +97,9 @@ function createGameListener(gameRef) {
   state.game.id = gameRef.key;
 
   gameRef.child('questions').on('child_added', snap => {
+    if (state.page === 'leaderboard')
+      state.page = 'question';
+
     state.game.questions[snap.key] = snap.val();
     createQuestionListeners(snap.ref, snap.key);
   });
@@ -147,6 +154,11 @@ function createQuestionListeners(questionRef, questionKey){
       if(state.user.uid === state.game.creator){
         checkAnswer(guessRef, snap.val());
       }
+      rerender();
+    });
+
+    snap.ref.child('ready').on('value', snap => {
+      state.game.questions[questionKey].guesses[guessKey].ready = snap.val();
       rerender();
     });
   });
@@ -262,12 +274,46 @@ const renderPage = state => {
   }
 }
 
+var hackLastQuestion = 0;
 const winTemplate = (state) => html`
 <h1>${Object.values(state.game.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
 <img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
 <div class="button" on-click=${(e) => { state.page = 'index'; }}>New game</div>`
 
-const leaderboardTemplate = state => html`
+const leaderboardTemplate = state => {
+  let rdy = true;
+  state.game.players.forEach(element => {
+    if (state.game.questions[state.game.currentQuestion].guesses[element.uid] === undefined 
+      || state.game.questions[state.game.currentQuestion].guesses[element.uid].ready === undefined
+      || state.game.questions[state.game.currentQuestion].guesses[element.uid].ready !== 42
+    )
+    {
+      rdy = false;
+    }
+    if (hackLastQuestion !== 0 && hackLastQuestion !== state.game.currentQuestion)
+      rdy = true;
+  });
+
+if (!rdy)
+  return html`
+<h1>TOP H4ck3r:</h1>
+<table>
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Guess</td>
+            <td>Points</td>
+        </tr>
+    </thead>
+    <tbody>
+      ${Object.values(state.game.players).sort((a,b) => b.points - a.points).map(pl => lederboardItemTemplate(pl))}
+    </tbody>
+</table>
+<img width="100" height="100" src="https://m.popkey.co/fe4ba7/DYALX.gif" />`
+  else
+  {
+    hackLastQuestion = state.game.currentQuestion;
+  return html`
 <h1>TOP H4ck3r:</h1>
 <table>
     <thead>
@@ -290,7 +336,7 @@ const leaderboardTemplate = state => html`
 
   rerender()
 }}>Next round</div>
-`
+`}}
 
 const lederboardItemTemplate = (user) => {
   if (state.game.questions[state.game.currentQuestion].guesses[user.uid] === undefined)
@@ -350,6 +396,7 @@ const answerTemplate = state => {
   <div class="button" on-click=${e => {
     state.game.questions[state.game.currentQuestion].Done = true;
     state.page = 'leaderboard';
+    playerReady(state.game.questions[state.game.currentQuestion].ref, state.user)
     rerender();
   }}>View rankings</div>
   </section>
@@ -379,7 +426,6 @@ const setNameTemplate = state => html`
 <input type="text" placeholder="Enter your name!" name="name" id="input-name" />
 <div class="button" on-click=${e => {
   state.user.updateProfile({ displayName: document.getElementById("input-name").value })
-  
   
   addPlayerToGame(gamesRef.child(state.game.id), state.user);
 
