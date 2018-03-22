@@ -140,3 +140,12 @@ table tr:nth-child(even){
 table tr:nth-child(odd){
     background-color:rgba(0,0,0,.05);
 }
+
+.container{
+    width: 300px;
+    margin: 0 auto;
+}
+
+.container h1{
+    margin-bottom: 5px;
+}
