@@ -8,6 +8,35 @@ const auth = firebase.auth();
 const gamesRef = db.ref('games');
 const NUM_WIN_ROUNDS = 10;
 
+const winningGifs = [
+  "https://media.giphy.com/media/2gtoSIzdrSMFO/giphy.gif",
+	"https://media.giphy.com/media/g9582DNuQppxC/giphy.gif",
+	"https://media.giphy.com/media/xT0xezQGU5xCDJuCPe/giphy.gif",
+	"https://media.giphy.com/media/3o6fIUZTTDl0IDjbZS/giphy.gif",
+	"https://media.giphy.com/media/xHMIDAy1qkzNS/giphy.gif",
+	"https://media.giphy.com/media/DKnMqdm9i980E/giphy.gif",
+	"https://media.giphy.com/media/3o7TKJhBfNCiispgDm/giphy.gif",
+	"https://media.giphy.com/media/cQNRp4QA8z7B6/giphy.gif",
+	"https://media.giphy.com/media/K3RxMSrERT8iI/giphy.gif",
+	"https://media.giphy.com/media/RWFpHUbc6s492/giphy.gif",
+	"https://media.giphy.com/media/3NtY188QaxDdC/giphy.gif",
+	"https://media.giphy.com/media/rjkJD1v80CjYs/giphy.gif",
+	"https://media.giphy.com/media/DYH297XiCS2Ck/giphy.gif",
+  "https://media.giphy.com/media/l4hLwMmFVBOAKF3EI/giphy.gif",
+  "https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif"
+];
+
+const trivia = [
+  "A long concatination of words that you can remember easily has a better cryptographic strength than a short password with mixed symbols",
+  "Forced frequent password changes weaken the choice of password",
+  "Uniform random passwords are hard to remember, why not let the user choose them?",
+  "Nist recommends: No password expiry without a reason",
+  "Nist recommends: Longer passwords have a higher cryptographic strength than complex short ones",
+  "Nist recommends: Passwords should have at least 8 characters",
+  "Nist recommends: Use password managers, if you can",
+  "Avoid commonly used passwords. Check your choice at <a href=\"https://haveibeenpwned.com/Passwords\">HaveIBeenPwned</a>!",
+];
+
 const state = {
   // the current game currently only set by createNewGame()
   game: {},
@@ -284,7 +313,7 @@ const renderPage = state => {
 var hackLastQuestion = 0;
 const winTemplate = (state) => html`
 <h1>${Object.values(state.game.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
-<img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
+<img src="${winningGifs[Math.floor(Math.random()*14)]}" />
 <div class="button" on-click=${(e) => { state.page = 'index'; rerender(); }}>New game</div>`
 
 const leaderboardTemplate = state => {
@@ -496,7 +525,7 @@ const questionGuessAmountTemplate = state => html`
   
   state.page = 'answer';
   rerender();
-}}>Submit</div>
+}}>Submit</div><br />${trivia[Math.floor(Math.random()*7)]}
 `
 
 const questionGuessPwTemplate = state => {
@@ -512,7 +541,7 @@ return html`
 
   state.page = 'answer';
   rerender();
-}}>Submit</div>
+}}>Submit</div><br />${trivia[Math.floor(Math.random()*7)]}
 `}
 
 function rerender(){
