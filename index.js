@@ -72,34 +72,23 @@ async function checkAnswer(answerRef, answer) {
 function getPasswordCount(password) 
 {
 	const path = "https://api.pwnedpasswords.com/pwnedpassword/" 
-	let xhttp = new XMLHttpRequest();
-    
-    let url = path + password; 
-    
-    xhttp.open("GET", url, false);
-    xhttp.setRequestHeader("Content-type", "application/json");
-    xhttp.send();
-	
-	let response; 
-    if(xhttp.status == 200){
-		response = JSON.parse(xhttp.responseText);
-		return response; 
-	}
-	
-	return 0;
+  let url = path + CryptoJS.SHA1(password).toString(); 
+	return fetch(url).then(res => res.json()).catch(error => 0);
 }
 
-function getPoints(password, input)
+async function getPoints(password, input)
 {	
-	let passwordCount = getPasswordCount(password); 
-	let inputCount = getPasswordCount(input); 
+	let passwordCount = await getPasswordCount(password); 
+	let inputCount = await getPasswordCount(input); 
 
-	let percentage = inputCount/passwordCount;
-	if(percentage >1) percentage -= 1;  
+  if (passwordCount == 0)
+    return 0;
 
-	let result = 1-percentage; 
-	
-	return Math.floor(result*100); 
+  let percentage = Math.log(1 + (inputCount/passwordCount)*(Math.E-1));
+  
+  if (percentage < 1)
+    return Math.round(100*percentage)
+  return 100;
 }
 
 /**
@@ -349,3 +338,6 @@ rerender()
 
 window.state = state;
 window.rerender = rerender;
+
+window.getPasswordCount = getPasswordCount;
+window.getPoints = getPoints;
