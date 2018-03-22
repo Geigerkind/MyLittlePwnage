@@ -1,4 +1,3 @@
-
 import {render, html} from './node_modules/lit-html/lit-html.js'
 const top10k = fetch("./top10k.json").then(res => res.json());
 
