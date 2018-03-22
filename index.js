@@ -231,9 +231,7 @@ const gameTemplate = (state) => html`
     </section>
 </main>
 <footer>
-    <a href="#">Imprint</a>
-    <a href="#">Credits</a>
-    <a href="#">Contact</a>
+    <a href="javascript:void(0);" on-click=${(e) => { state.page = 'imprint'; rerender() }}>Imprint</a>
 </footer>`;
 
 
@@ -255,6 +253,7 @@ const renderPage = state => {
     case 'waiting': return waitingTemplate(state);
     case 'leaderboard': return leaderboardTemplate(state);
     case 'win': return winTemplate(state);
+    case 'imprint': return imprintTemplate(state);
   }
 }
 
@@ -291,6 +290,17 @@ const waitingTemplate = state => html`
 <img src="https://media.giphy.com/media/LiWsL77P4tA9a/giphy.gif" />
 <h1>Waiting for players...</h1>
 `
+
+const imprintTemplate = state => html`
+<div class="container">
+<h1>Imprint</h1><br />
+<b>Contact: MyLittlePwnage@lergin.de</b>
+<h1>Credits</h1><br />
+<b><a href="https://haveibeenpwned.com">HaveIBeenPwned</a></b>: Provides an useful API to check passwords.<br /><br />
+<b><a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top10K.txt">Daniel Miessler</a></b>: Provided password lists.
+</div>
+`
+
 
 const enterGroupTemplate = state => html`
 <input type="text" placeholder="Enter your name!" name="name" id="input-username"/><br />
