@@ -2,7 +2,7 @@ body{
     color: #e1f2f5;
     line-height: 1.4;
     font-size: 14px;
-    font-family: Open Sans !important;
+    font-family: Arial !important;
     background-color: rgba(0,0,0,.81);
     margin: 0;
     padding: 0;
@@ -55,6 +55,19 @@ section{
     box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
 }
 
+input{
+    background-color: rgba(0,0,0,.51);
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
+    width: 280px;
+    height: 50px;
+
+    border: 1px solid #ccc;
+    font-size: 18px;
+    padding: 0 10px 0 10px;
+    color: #e1f2f5;
+    margin-top: 10px;
+}
+
 .button:hover{
     cursor: pointer;
 }
@@ -101,6 +114,7 @@ table{
     font-size: 16px;
 
     margin: -20px auto;
+    margin-bottom: 10px;
 
     box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
 }
