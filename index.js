@@ -263,7 +263,7 @@ const renderPage = state => {
 const winTemplate = (state) => html`
 <h1>${Object.values(state.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
 <img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
-<div class="button">New game</div>`
+<div class="button" on-click=${(e) => { state.page = 'index'; }}>New game</div>`
 
 const leaderboardTemplate = state => html`
 <h1>TOP H4ck3r:</h1>
