@@ -48,7 +48,10 @@ async function checkAnswer(answerRef, answer) {
 /**
  * gets the amount the password was in the breaches
  */
-async function getPasswordCount(password) {
+ 
+function getPasswordCount(password) 
+{
+	const path = "https://api.pwnedpasswords.com/pwnedpassword/" 
 	let xhttp = new XMLHttpRequest();
     
     let url = path + password; 
@@ -56,10 +59,27 @@ async function getPasswordCount(password) {
     xhttp.open("GET", url, false);
     xhttp.setRequestHeader("Content-type", "application/json");
     xhttp.send();
-    
-    let response = JSON.parse(xhttp.responseText);
-    
-	return response; 
+	
+	let response; 
+    if(xhttp.status == 200){
+		response = JSON.parse(xhttp.responseText);
+		return response; 
+	}
+	
+	return 0;
+}
+
+function getPoints(password, input)
+{	
+	let passwordCount = getPasswordCount(password); 
+	let inputCount = getPasswordCount(input); 
+
+	let percentage = inputCount/passwordCount;
+	if(percentage >1) percentage -= 1;  
+
+	let result = 1-percentage; 
+	
+	return Math.floor(result*100); 
 }
 
 /**
