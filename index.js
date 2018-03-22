@@ -120,7 +120,7 @@ function createQuestionListeners(questionRef, questionKey){
 }
 
 function createRandomPwAmount(){
-  return '4' // TODO
+  return 42;
 }
 
 /**
