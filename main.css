@@ -149,3 +149,12 @@ table tr:nth-child(odd){
 .container h1{
     margin-bottom: 5px;
 }
+
+#mode-button{
+    font-size: 20px;
+}
+
+#title{
+    line-height: 40px;
+    font-size: 24px;
+}

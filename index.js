@@ -43,6 +43,7 @@ const state = {
   page: 'index',
   players: [],
   rounds: 0,
+  mode: 0,
   isCreator: () => state.user.uid === game.creator
 }
 
@@ -62,15 +63,16 @@ function createNewGame(user) {
 async function createNewQuestion(gameRef) {
   const ref = gameRef.child('questions').push();
   let ranNum = await retrievePseudoRandomNumber();
-  ref.child('type').set("pw");
+  if (state.mode === 0)
+    ref.child('type').set("pw");
+  else
+    ref.child('type').set("amount");
   ref.child('answer').set(ranNum[0]);
   ref.child('question').set(ranNum[1]);
   return ref;
 }
 
 function addPlayerToGame(gameRef, player) {
-  console.log(player.displayName)
-
   gameRef.child('players').child(player.uid).set(player.displayName);
 }
 
@@ -86,7 +88,21 @@ function playerReady(questionRef, user) {
  * sets the amount the password was pwned
  */
 async function checkAnswer(answerRef, answer) {
-  const count = await getPasswordCount(answer);
+  let count = 0;
+  if (state.mode === 0)
+    count = await getPasswordCount(answer);
+  else
+  {
+    var retValue = 0;
+    if(answer !== null) {
+        if(answer.length > 0) {
+            if (!isNaN(answer)) {
+                retValue = parseInt(answer);
+            }
+        }
+    }
+    count = retValue;
+  }
 
   answerRef.child('amount').set(count);
 }
@@ -141,7 +157,6 @@ function createGameListener(gameRef) {
   });
 
   gameRef.child('players').on('child_added', snap => {
-    console.log(snap.val());
     state.game.players.push({
       displayName: snap.val(),
       uid: snap.key,
@@ -201,7 +216,7 @@ function createQuestionListeners(questionRef, questionKey){
 
   questionRef.child('question').on('value', snap => {
     state.game.questions[questionKey].question = snap.val();
-    rerender()    
+    rerender() 
   });
 
   questionRef.child('answer').on('value', snap => {
@@ -210,6 +225,11 @@ function createQuestionListeners(questionRef, questionKey){
 
   questionRef.child('type').on('value', snap => {
     state.game.questions[questionKey].type = snap.val();
+    if (state.game.questions[questionKey].type === "pw")
+      state.mode = 0;
+    else
+      state.mode = 1;
+    rerender()    
   });
 
   questionRef.child('finished').on('value', snap => {
@@ -264,17 +284,11 @@ firebase.auth().onAuthStateChanged(user => {
 const gameTemplate = (state) => html`
 <header>
     <div>
+      <a href="/">
         <img height="40" width="40" src="https://derpicdn.net/img/2013/7/6/365909/full.png" title="MyLittlePwnage" />
+      </a>
     </div>
-    <div>
-        <img height="40" width="40" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScr6GOuixbVi-Sn8Oodr4756CSEdd0YZsUykSvDwficCRMkaxE-g" />
-    </div>
-    <div>
-        <img height="40" width="40" src="http://files.softicons.com/download/social-media-icons/flat-social-media-icons-by-uiconstock/png/512x512/twitter2.png" />
-    </div>
-    <div>
-        <img height="40" width="40" src="http://files.softicons.com/download/social-media-icons/flat-gradient-social-icons-by-guilherme-lima/ico/Reddit.ico" />
-    </div>
+    <div id="title">MyLittlePwnage</div>
 </header>
 <main>
     <section>
@@ -293,9 +307,9 @@ const renderPage = state => {
       if (!state.game.questions) state.game.questions = {}
       if (!state.game.questions[state.game.currentQuestion]) state.game.questions[state.game.currentQuestion] = {}
 
-      switch (state.game.questions[state.game.currentQuestion].type){
-        case 'pw': return questionGuessPwTemplate(state);
-        case 'amount': return questionGuessAmountTemplate(state);
+      switch (state.mode){
+        case 0: return questionGuessPwTemplate(state);
+        case 1: return questionGuessAmountTemplate(state);
       }
       break;
     case 'create_mp': return createMPGameTemplate(state);
@@ -398,7 +412,6 @@ return html`
 `}
 
 const waitingTemplate = state => html`
-<!-- TODO: Random gifs here -->
 <img src="https://media.giphy.com/media/LiWsL77P4tA9a/giphy.gif" />
 <h1>Waiting for players...</h1>
 `
@@ -415,6 +428,7 @@ const imprintTemplate = state => html`
 <h1>Credits</h1><br />
 <b><a href="https://haveibeenpwned.com">HaveIBeenPwned</a></b>: Provides an useful API to check passwords.<br /><br />
 <b><a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top10K.txt">Daniel Miessler</a></b>: Provided password lists.
+TODO: Giphy thanks
 </div>
 `
 
@@ -429,6 +443,21 @@ const answerTemplate = state => {
 
   if (!amount)
     return html`<section><img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" /></section>`
+  if (state.mode === 0)
+    return html`
+  <section>
+  <h1>The answer is: ${answerPlain}</h1>
+  <h1>${answerPlain} was leaked ${questionAmount} times</h1>
+  <h1>Your answer is ${guess} </h1>
+  <h1>You gained ${getPoints(amount, questionAmount)} points</h1>
+  <div class="button" on-click=${e => {
+    state.game.questions[state.game.currentQuestion].Done = true;
+    state.page = 'leaderboard';
+    playerReady(state.game.questions[state.game.currentQuestion].ref, state.user)
+    rerender();
+  }}>View rankings</div>
+  </section>
+  `
   return html`
   <section>
   <h1>The answer is: ${answerPlain}</h1>
@@ -513,20 +542,38 @@ const createGameTemplate = state => html`
   state.page = 'create_mp';
   rerender();
 }}>Multiplayer</div>
+<div class="button" id="mode-button" on-click=${e => {
+  if (state.mode === 0)
+  {
+    state.mode = 1;
+    document.getElementById("mode-button").innerHTML = "Mode: Password => Number"
+  }
+  else
+  {
+    state.mode = 0;
+    document.getElementById("mode-button").innerHTML = "Mode: Number => Password"
+  }
+}}
+>Mode: ${state.mode === 0 ? 'Number => Password' : 'Password => Number'}</div>
 `
 
-const questionGuessAmountTemplate = state => html`
-<h1>${state.game.questions[state.game.currentQuestion].question}</h1>
+const questionGuessAmountTemplate = state => {
+if (state.game.questions[state.game.currentQuestion].Done === true)
+  return html`<section><img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" /></section>` 
+return html`
+<h1>${state.game.questions[state.game.currentQuestion].answer}</h1>
 <input type="text" placeholder="Leaked... times" name="input" id="input-answer"/>
 <div class="button" on-click=${e => {
   const answer = document.getElementById('input-answer').value;
-
-  answerQuestion(state.game.questions[state.game.currentQuestion].ref, state.user, answer);
+  if (!isNaN(answer))
+  {
+    answerQuestion(state.game.questions[state.game.currentQuestion].ref, state.user, answer);
+    state.page = 'answer';
+    rerender();
+  }
   
-  state.page = 'answer';
-  rerender();
 }}>Submit</div><br />${trivia[Math.floor(Math.random()*7)]}
-`
+`}
 
 const questionGuessPwTemplate = state => {
 if (state.game.questions[state.game.currentQuestion].Done === true)
@@ -548,17 +595,9 @@ function rerender(){
   render(gameTemplate(state), document.body)
 }
 
-console.log("RENDERED")
-
 // if noone is logged in show the login stuff
 if (!state.user) {
   anonLogin();
 }
 
 rerender()
-
-window.state = state;
-window.rerender = rerender;
-
-window.getPasswordCount = getPasswordCount;
-window.getPoints = getPoints;
