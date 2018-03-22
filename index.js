@@ -57,6 +57,9 @@ function addPlayerToGame(gameRef, player) {
 }
 
 function answerQuestion(questionRef, user, answer) {
+  console.log(user.uid)
+  console.log(answer)
+  console.log(questionRef)
   questionRef.child('guesses').child(user.uid).child('guess').set(answer);
 }
 
@@ -65,7 +68,7 @@ function answerQuestion(questionRef, user, answer) {
  */
 async function checkAnswer(answerRef, answer) {
   const count = await getPasswordCount(answer);
-  
+
   answerRef.child('amount').set(count);
 }
 
@@ -80,11 +83,8 @@ function getPasswordCount(password)
 	return fetch(url).then(res => res.json()).catch(error => 0);
 }
 
-async function getPoints(password, input)
+function getPoints(passwordCount, inputCount)
 {	
-	let passwordCount = await getPasswordCount(password); 
-	let inputCount = await getPasswordCount(input); 
-
   if (passwordCount == 0)
     return 0;
 
@@ -92,6 +92,7 @@ async function getPoints(password, input)
   
   if (percentage < 1)
     return Math.round(100*percentage)
+
   return 100;
 }
 
@@ -134,6 +135,7 @@ function createQuestionListeners(questionRef, questionKey){
   if (!state.game.questions[questionKey].guesses) state.game.questions[questionKey].guesses = {};
   
   state.game.currentQuestion = questionKey;
+  state.game.questions[questionKey].ref = questionRef;
 
   questionRef.child('guesses').on('child_added', snap => {
     const guessKey = snap.key;
@@ -142,8 +144,9 @@ function createQuestionListeners(questionRef, questionKey){
     // check if all objects exist
     if (!state.game.questions[questionKey].guesses[guessKey]) state.game.questions[questionKey].guesses[guessKey] = {};
     
-    snap.ref.child('answer').on('value', snap => {
-      state.game.questions[questionKey].guesses[guessKey].answer = snap.val();
+    snap.ref.child('amount').on('value', snap => {
+      state.game.questions[questionKey].guesses[guessKey].amount = snap.val();
+      rerender();      
     });
     
     snap.ref.child('guess').on('value', snap => {
@@ -152,6 +155,7 @@ function createQuestionListeners(questionRef, questionKey){
       if(state.user.uid === state.game.creator){
         checkAnswer(guessRef, snap.val());
       }
+      rerender();
     });
   });
 
@@ -303,18 +307,27 @@ const imprintTemplate = state => html`
 <b><a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top10K.txt">Daniel Miessler</a></b>: Provided password lists.
 </div>
 `
-const answerTemplate = state => html`
-<section>
-<h1>The answer is: monkey</h1>
-<h1>monkey was leaked 23121 times</h1>
-<h1>answer was leaked 23232323 times </h1>
-<h1>You gained 2 points</h1>
-<div class="button" on-click=${e => {
-  state.page = 'leaderboard';
-  rerender();
-}}>View rankings</div>
-</section>
-`
+const answerTemplate = state => {
+  if (!state.game.questions[state.game.currentQuestion].guesses) state.game.questions[state.game.currentQuestion].guesses = {};
+  if (!state.game.questions[state.game.currentQuestion].guesses[state.user.uid]) state.game.questions[state.game.currentQuestion].guesses[state.user.uid] = {};
+
+  const guess = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].guess;
+  const amount = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].amount;
+  const questionAmount = state.game.questions[state.game.currentQuestion].question;
+
+  return html`
+  <section>
+  <h1>The answer is: ${"MONKEY"}</h1>
+  <h1>${"MONKEY"} was leaked ${questionAmount} times</h1>
+  <h1>${guess} was leaked ${amount} times </h1>
+  <h1>You gained ${getPoints(amount, questionAmount)} points</h1>
+  <div class="button" on-click=${e => {
+    state.page = 'leaderboard';
+    rerender();
+  }}>View rankings</div>
+  </section>
+  `
+}
 
 const enterGroupTemplate = state => html`
 <input type="text" placeholder="Enter your name!" name="name" id="input-username"/><br />
@@ -354,8 +367,6 @@ const createMPGameTemplate = state => html`
   rerender();
 }}>Create group</div>
 <div class="button" on-click=${e => {
-
-
   state.page = "enter_group"
   rerender();
 }}>Join group</div>
@@ -384,8 +395,12 @@ const createGameTemplate = state => html`
 
 const questionGuessAmountTemplate = state => html`
 <h1>${state.game.questions[state.game.currentQuestion].question}</h1>
-<input type="text" placeholder="Leaked... times" name="input" />
+<input type="text" placeholder="Leaked... times" name="input" id="input-answer"/>
 <div class="button" on-click=${e => {
+  const answer = document.getElementById('input-answer').value;
+
+  answerQuestion(state.game.questions[state.game.currentQuestion].ref, state.user, answer);
+
   state.page = 'answer';
   rerender();
 }}>Submit</div>
@@ -393,8 +408,12 @@ const questionGuessAmountTemplate = state => html`
 
 const questionGuessPwTemplate = state => html`
 <h1>${state.game.questions[state.game.currentQuestion].question}</h1>
-<input type="text" placeholder="Guess password!" name="input" />
+<input type="text" placeholder="Guess password!" name="input" id="input-answer" />
 <div class="button" on-click=${e => {
+  const answer = document.getElementById('input-answer').value;
+
+  answerQuestion(state.game.questions[state.game.currentQuestion].ref, state.user, answer);
+
   state.page = 'answer';
   rerender();
 }}>Submit</div>
