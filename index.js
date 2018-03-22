@@ -12,7 +12,7 @@ const state = {
   game: {},
   page: 'index',
   players: [],
-  isCreator: true
+  isCreator: () => state.user.uid === game.creator
 }
 
 /**
