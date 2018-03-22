@@ -8,6 +8,22 @@
     <link rel="stylesheet"
         href="main.css" />
     <link rel="shortcut icon" href="https://derpicdn.net/img/2013/7/6/365909/full.png" />
+
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyB7ogQukblOMFJgxTBZ4u2uPX7NBfIBtP4",
+            authDomain: "hive-site-test.firebaseapp.com",
+            databaseURL: "https://hive-site-test.firebaseio.com",
+            projectId: "hive-site-test",
+            storageBucket: "hive-site-test.appspot.com",
+            messagingSenderId: "1072509145370"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
   </head>
   <body>   
         <header>
@@ -106,5 +122,6 @@
             <a href="#">Credits</a>
             <a href="#">Contact</a>
         </footer>
+        <script type="module" src="./index.js"></script>        
   </body>
 </html>
