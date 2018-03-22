@@ -1,20 +1,39 @@
+import {render, html} from './node_modules/lit-html/lit-html.js'
+
+
 const db = firebase.database();
 const auth = firebase.auth();
 
 const gamesRef = db.ref('games');
 
 const state = {
+  test: 'HELLO WORLD',
   // will be set by the login
-  user: {
+  /*user: {
     uid: '',
     // only available if not anonymous
     displayName: '',
     photoURL: '',
     // true if anonymous
     isAnonymous: ''
-  },
+  },*/
   // the current game currently only set by createNewGame()
-  game: {}
+  game: {},
+  currentQuestion: {
+    question: '123400',
+    type: 'pw'
+  },
+  currentPage: 'question',
+  players: {
+    a: {
+      displayName: "Malte",
+      points: 123
+    },
+    b: {
+      displayName: "Tom",
+      points: 312
+    }
+  }
 }
 
 /**
@@ -64,6 +83,8 @@ function createGameListener(gameRef) {
   // create the necessary objects if they aren't there already
   if (!state.game.questions) state.game.questions = {}
   if (!state.game.players) state.game.players = {}
+
+  state.game.id = gameRef.key;
 
   gameRef.child('questions').on('child_added', snap => {
     state.game.questions[snap.key] = snap.val();
@@ -119,7 +140,7 @@ function createQuestionListeners(questionRef, questionKey){
   });
 }
 
-function createRandomPwAmount(){
+function createRandomPwAmount() {
   return '4' // TODO
 }
 
@@ -144,6 +165,7 @@ function login(){
  * anonymous login
  */
 function anonLogin() {
+  console.log("HELLO?")
   firebase.auth().signInAnonymously();
 }
 
@@ -152,6 +174,7 @@ function logout() {
 }
 
 firebase.auth().onAuthStateChanged(user => {
+  console.log(user)
   if (user) {
     console.log(user)
     state.user = user;
@@ -160,11 +183,142 @@ firebase.auth().onAuthStateChanged(user => {
   } else {
     console.log('logout')
   }
+
+  rerender()
+  
 });
 
-// if noone is logged in show the login stuff
-if(!state.user){
-  login();
+const gameTemplate = (state) => html`
+<header>
+    <div>
+        <img height="40" width="40" src="https://derpicdn.net/img/2013/7/6/365909/full.png" title="MyLittlePwnage" />
+    </div>
+    <div>
+        <img height="40" width="40" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScr6GOuixbVi-Sn8Oodr4756CSEdd0YZsUykSvDwficCRMkaxE-g" />
+    </div>
+    <div>
+        <img height="40" width="40" src="http://files.softicons.com/download/social-media-icons/flat-social-media-icons-by-uiconstock/png/512x512/twitter2.png" />
+    </div>
+    <div>
+        <img height="40" width="40" src="http://files.softicons.com/download/social-media-icons/flat-gradient-social-icons-by-guilherme-lima/ico/Reddit.ico" />
+    </div>
+</header>
+<main>
+    <section>
+        ${createGameTemplate(state)}
+    </section>
+    <section>
+        ${questionGuessAmountTemplate(state)}
+    </section>
+    <section>
+        ${questionGuessPwTemplate(state)}
+    </section>
+    <section>
+        ${createMPGameTemplate(state)}
+    </section>
+    <section>
+        ${setNameTemplate(state)}
+    </section>
+    <section>
+        ${enterGroupTemplate(state)}
+    </section>
+    <section>
+        ${waitingTemplate(state)}
+    </section>
+    <section>
+        ${leaderboardTemplate(state)}
+    </section>
+    <section>
+        ${winTemplate(state)}
+    </section>
+</main>
+<footer>
+    <a href="#">Imprint</a>
+    <a href="#">Credits</a>
+    <a href="#">Contact</a>
+</footer>`;
+
+
+const winTemplate = (state) => html`
+<h1>${Object.values(state.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
+<img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
+<div class="button">New game</div>`
+
+const leaderboardTemplate = state => html`
+<h1>TOP H4ck3r:</h1>
+<table>
+    <thead>
+        <tr>
+            <td>Name</td>
+            <td>Points</td>
+        </tr>
+    </thead>
+    <tbody>
+      ${Object.values(state.players).sort((a,b) => b.points - a.points).map(pl => lederboardItemTemplate(pl))}
+    </tbody>
+</table>
+<div class="button">Next round</div>
+`
+
+const lederboardItemTemplate = (user) => html`
+<tr>
+    <td>${user.displayName}</td>
+    <td>${user.points}</td>
+</tr>
+`
+
+const waitingTemplate = state => html`
+<!-- TODO: Random gifs here -->
+<img src="https://media.giphy.com/media/LiWsL77P4tA9a/giphy.gif" />
+<h1>Waiting for players...</h1>
+`
+
+const enterGroupTemplate = state => html`
+<input type="text" placeholder="Enter your name!" name="name" /><br />
+<input type="text" placeholder="Enter group key!" name="groupkey" />
+<div class="button">Enter group</div>
+`
+
+const setNameTemplate = state => html`
+<h1>Your group key is: </h1>
+<h1>${state.game.id}</h1>
+<input type="text" placeholder="Enter your name!" name="name" />
+<div class="button">Enter group</div>
+`
+
+const createMPGameTemplate = state => html`
+<div class="button">Create group</div>
+<div class="button">Join group</div>
+`
+
+const createGameTemplate = state => html`
+<img height="200" width="200" src="https://derpicdn.net/img/2013/7/6/365909/full.png" />
+<h1>Ready to pwn?</h1>
+<div class="button">Singleplayer</div>
+<div class="button">Multiplayer</div>
+`
+
+const questionGuessAmountTemplate = state => html`
+<h1>${state.currentQuestion.question}</h1>
+<input type="text" placeholder="Leaked... times" name="input" />
+<div class="button">Submit</div>
+`
+
+const questionGuessPwTemplate = state => html`
+<h1>${state.currentQuestion.question}</h1>
+<input type="text" placeholder="Guess password!" name="input" />
+<div class="button">Submit</div>
+`
+
+function rerender(){
+  render(gameTemplate(state), document.body)
 }
 
+console.log("RENDERED")
 
+// if noone is logged in show the login stuff
+if (!state.user) {
+  anonLogin();
+}
+
+rerender()
