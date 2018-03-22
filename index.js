@@ -1,4 +1,4 @@
-import {render, html} from './node_modules/lit-html/lit-html.js'
+import {render, html} from './node_modules/lit-html/lib/lit-extended.js'
 
 
 const db = firebase.database();
@@ -23,7 +23,7 @@ const state = {
     question: '123400',
     type: 'pw'
   },
-  currentPage: 'question',
+  page: 'question',
   players: {
     a: {
       displayName: "Malte",
@@ -33,7 +33,8 @@ const state = {
       displayName: "Tom",
       points: 312
     }
-  }
+  },
+  isCreator: true
 }
 
 /**
@@ -216,6 +217,7 @@ const gameTemplate = (state) => html`
     <a href="#">Contact</a>
 </footer>`;
 
+
 const renderPage = state => {
   switch(state.page){
     case 'index': return createGameTemplate(state);
@@ -252,7 +254,7 @@ const leaderboardTemplate = state => html`
       ${Object.values(state.players).sort((a,b) => b.points - a.points).map(pl => lederboardItemTemplate(pl))}
     </tbody>
 </table>
-<div class="button">Next round</div>
+<div class="button" on-click=${(e) => { state.page = 'question'; if (state.isCreator) { createNewQuestion(state.game.ref)} }}>Next round</div>
 `
 
 const lederboardItemTemplate = (user) => html`
@@ -269,9 +271,15 @@ const waitingTemplate = state => html`
 `
 
 const enterGroupTemplate = state => html`
-<input type="text" placeholder="Enter your name!" name="name" /><br />
-<input type="text" placeholder="Enter group key!" name="groupkey" />
-<div class="button">Enter group</div>
+<input type="text" placeholder="Enter your name!" name="name" id="input-username"/><br />
+<input type="text" placeholder="Enter group key!" name="groupkey" id="input-groupkey" />
+<div class="button" on-click=${e => {
+  const groupkey = document.getElementById('input-groupkey').value;
+
+  console.log(groupkey)
+
+  createGameListener(gamesRef.child(groupkey))
+}}>Enter group</div>
 `
 
 const setNameTemplate = state => html`
@@ -317,3 +325,7 @@ if (!state.user) {
 }
 
 rerender()
+
+window.state = state;
+window.rerender = rerender;
+
