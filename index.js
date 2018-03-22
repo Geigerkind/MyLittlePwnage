@@ -170,7 +170,6 @@ function login(){
  * anonymous login
  */
 function anonLogin() {
-  console.log("HELLO?")
   firebase.auth().signInAnonymously();
 }
 
@@ -179,9 +178,7 @@ function logout() {
 }
 
 firebase.auth().onAuthStateChanged(user => {
-  console.log(user)
   if (user) {
-    console.log(user)
     state.user = user;
     state.game.ref = createNewGame(state.user);
     createGameListener(state.game.ref);
@@ -210,31 +207,7 @@ const gameTemplate = (state) => html`
 </header>
 <main>
     <section>
-        ${createGameTemplate(state)}
-    </section>
-    <section>
-        ${questionGuessAmountTemplate(state)}
-    </section>
-    <section>
-        ${questionGuessPwTemplate(state)}
-    </section>
-    <section>
-        ${createMPGameTemplate(state)}
-    </section>
-    <section>
-        ${setNameTemplate(state)}
-    </section>
-    <section>
-        ${enterGroupTemplate(state)}
-    </section>
-    <section>
-        ${waitingTemplate(state)}
-    </section>
-    <section>
-        ${leaderboardTemplate(state)}
-    </section>
-    <section>
-        ${winTemplate(state)}
+        ${renderPage(state)}
     </section>
 </main>
 <footer>
@@ -243,6 +216,23 @@ const gameTemplate = (state) => html`
     <a href="#">Contact</a>
 </footer>`;
 
+const renderPage = state => {
+  switch(state.page){
+    case 'index': return createGameTemplate(state);
+    case 'question': 
+      switch(state.currentQuestion.type){
+        case 'pw': return questionGuessPwTemplate(state);
+        case 'amount': return questionGuessAmountTemplate(state);
+      }
+      break;
+    case 'create_mp': return createMPGameTemplate(state);
+    case 'name': return setNameTemplate(state);
+    case 'enter_group': return enterGroupTemplate(state);
+    case 'waiting': return waitingTemplate(state);
+    case 'leaderboard': return leaderboardTemplate(state);
+    case 'win': return winTemplate(state);
+  }
+}
 
 const winTemplate = (state) => html`
 <h1>${Object.values(state.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
