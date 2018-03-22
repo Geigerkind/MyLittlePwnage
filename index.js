@@ -47,8 +47,10 @@ function createNewGame(user) {
 
 async function createNewQuestion(gameRef) {
   const ref = gameRef.child('questions').push();
+  let ranNum = await retrievePseudoRandomNumber();
   ref.child('type').set("pw");
-  ref.child('question').set(await retrievePseudoRandomNumber());
+  ref.child('answer').set(ranNum[0]);
+  ref.child('question').set(ranNum[1]);
   return ref;
 }
 
@@ -175,7 +177,8 @@ function createQuestionListeners(questionRef, questionKey){
 
 async function retrievePseudoRandomNumber(){
   let index = Math.floor(Math.random() * 9999);
-  return getPasswordCount((await top10k).data[index]);
+  let pw =(await top10k).data[index];
+  return [pw, getPasswordCount(pw)];
 }
 
 /**
@@ -320,11 +323,12 @@ const answerTemplate = state => {
   const guess = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].guess;
   const amount = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].amount;
   const questionAmount = state.game.questions[state.game.currentQuestion].question;
+  const answerPlain = state.game.question[state.game.currentQuestion].answer;
 
   return html`
   <section>
-  <h1>The answer is: ${"MONKEY"}</h1>
-  <h1>${"MONKEY"} was leaked ${questionAmount} times</h1>
+  <h1>The answer is: ${answerPlain}</h1>
+  <h1>${answerPlain} was leaked ${questionAmount} times</h1>
   <h1>${guess} was leaked ${amount} times </h1>
   <h1>You gained ${getPoints(amount, questionAmount)} points</h1>
   <div class="button" on-click=${e => {
