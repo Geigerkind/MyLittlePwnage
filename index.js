@@ -284,7 +284,7 @@ const leaderboardTemplate = state => html`
 </table>
 <div class="button" on-click=${(e) => {
   state.page = 'question';
-
+  state.game.questions[state.game.currentQuestion].question = 0;
   if (state.isCreator) {
     createNewQuestion(gamesRef.child(state.game.id))
   }
@@ -330,6 +330,8 @@ const answerTemplate = state => {
   const questionAmount = state.game.questions[state.game.currentQuestion].question;
   const answerPlain = state.game.questions[state.game.currentQuestion].answer;
 
+  if (!amount)
+    return html`<section><img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" /></section>`
   return html`
   <section>
   <h1>The answer is: ${answerPlain}</h1>
@@ -337,6 +339,7 @@ const answerTemplate = state => {
   <h1>${guess} was leaked ${amount} times </h1>
   <h1>You gained ${getPoints(amount, questionAmount)} points</h1>
   <div class="button" on-click=${e => {
+    state.game.questions[state.game.currentQuestion].question = 0;
     state.page = 'leaderboard';
     rerender();
   }}>View rankings</div>
@@ -418,14 +421,17 @@ const questionGuessAmountTemplate = state => html`
   const answer = document.getElementById('input-answer').value;
 
   answerQuestion(state.game.questions[state.game.currentQuestion].ref, state.user, answer);
-
+  
   state.page = 'answer';
   rerender();
 }}>Submit</div>
 `
 
-const questionGuessPwTemplate = state => html`
-<h1>${state.game.questions[state.game.currentQuestion].question}</h1>
+const questionGuessPwTemplate = state => {
+if (state.game.questions[state.game.currentQuestion].question === 0)
+  return html`<section><img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" /></section>`  
+return html`
+<h1>${state.game.questions[state.game.currentQuestion].question }</h1>
 <input type="text" placeholder="Guess password!" name="input" id="input-answer" />
 <div class="button" on-click=${e => {
   const answer = document.getElementById('input-answer').value;
@@ -435,7 +441,7 @@ const questionGuessPwTemplate = state => html`
   state.page = 'answer';
   rerender();
 }}>Submit</div>
-`
+`}
 
 function rerender(){
   render(gameTemplate(state), document.body)
