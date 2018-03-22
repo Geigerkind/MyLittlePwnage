@@ -98,6 +98,7 @@ function createGameListener(gameRef) {
   });
 
   gameRef.child('players').on('child_added', snap => {
+    console.log(snap.val());
     state.game.players.push({
       displayName: snap.val(),
       uid: snap.key,
@@ -350,6 +351,10 @@ const enterGroupTemplate = state => html`
   const groupkey = document.getElementById('input-groupkey').value;
 
   createGameListener(gamesRef.child(groupkey))
+
+  state.user.updateProfile({ displayName: document.getElementById("input-username").value })
+  
+  addPlayerToGame(gamesRef.child(state.game.id), state.user);
 
   state.page = "question";
   rerender();
