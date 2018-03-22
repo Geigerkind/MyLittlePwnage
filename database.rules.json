@@ -51,6 +51,10 @@
                 "amount": {
                   ".write": "auth.uid === data.parent().parent().parent().parent().parent().child('creator').val() && !data.exists()",
                   ".validate": "newData.isNumber()"
+                },
+
+                "ready": {
+                  ".write": true
                 }
               }
             },
