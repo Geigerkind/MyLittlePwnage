@@ -135,8 +135,6 @@ function createQuestionListeners(questionRef, questionKey){
       let pl = state.game.players.find(a => a.uid === guessKey);
       
       if(pl){
-    
-
         pl.points += getPoints(state.game.questions[state.game.currentQuestion].question, snap.val())
       }
 
@@ -275,6 +273,7 @@ const leaderboardTemplate = state => html`
     <thead>
         <tr>
             <td>Name</td>
+            <td>Guess</td>
             <td>Points</td>
         </tr>
     </thead>
@@ -284,7 +283,7 @@ const leaderboardTemplate = state => html`
 </table>
 <div class="button" on-click=${(e) => {
   state.page = 'question';
-  state.game.questions[state.game.currentQuestion].question = 0;
+  
   if (state.isCreator) {
     createNewQuestion(gamesRef.child(state.game.id))
   }
@@ -293,12 +292,22 @@ const leaderboardTemplate = state => html`
 }}>Next round</div>
 `
 
-const lederboardItemTemplate = (user) => html`
+const lederboardItemTemplate = (user) => {
+  if (state.game.questions[state.game.currentQuestion].guesses[user.uid] === undefined)
+    return html`
+    <tr>
+        <td>${user.displayName}</td>
+        <td></td>
+        <td>${user.points}</td>
+    </tr>
+    `
+return html`
 <tr>
     <td>${user.displayName}</td>
+    <td>${state.game.questions[state.game.currentQuestion].guesses[user.uid].guess}</td>
     <td>${user.points}</td>
 </tr>
-`
+`}
 
 const waitingTemplate = state => html`
 <!-- TODO: Random gifs here -->
@@ -339,7 +348,7 @@ const answerTemplate = state => {
   <h1>${guess} was leaked ${amount} times </h1>
   <h1>You gained ${getPoints(amount, questionAmount)} points</h1>
   <div class="button" on-click=${e => {
-    state.game.questions[state.game.currentQuestion].question = 0;
+    state.game.questions[state.game.currentQuestion].Done = true;
     state.page = 'leaderboard';
     rerender();
   }}>View rankings</div>
@@ -428,7 +437,7 @@ const questionGuessAmountTemplate = state => html`
 `
 
 const questionGuessPwTemplate = state => {
-if (state.game.questions[state.game.currentQuestion].question === 0)
+if (state.game.questions[state.game.currentQuestion].Done === true)
   return html`<section><img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" /></section>`  
 return html`
 <h1>${state.game.questions[state.game.currentQuestion].question }</h1>
