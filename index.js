@@ -68,12 +68,17 @@ async function checkAnswer(answerRef, answer) {
  * gets the amount the password was in the breaches
  */
 async function getPasswordCount(password) {
-  const hash = password; // TODO
-
-  const res = await fetch(`https://api.pwnedpasswords.com/range/${hash.substr(0, 5)}`).then(res => res.text())
-
-  // TODO
-  return 1;
+	let xhttp = new XMLHttpRequest();
+    
+    let url = path + password; 
+    
+    xhttp.open("GET", url, false);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+    
+    let response = JSON.parse(xhttp.responseText);
+    
+	return response; 
 }
 
 /**
