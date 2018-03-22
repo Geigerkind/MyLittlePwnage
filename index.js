@@ -22,6 +22,7 @@ function createNewGame(user) {
   const ref = gamesRef.push()
   ref.child('creator').set(user.uid);
   hackLastQuestion = 0;
+  state.user.updateProfile({ displayName: '' })
   createNewQuestion(ref);
   return ref;
 }
@@ -424,11 +425,11 @@ const setNameTemplate = state => html`
 <h1>Your group key is: </h1>
 <h1>${state.game.id}</h1>
 <input type="text" placeholder="Enter your name!" name="name" id="input-name" />
-<div class="button" on-click=${e => {
+<div class="button" on-click=${async e => {
   let name = document.getElementById("input-name").value;
   if (name !== '')
   {
-    state.user.updateProfile({ displayName: document.getElementById("input-name").value })
+    await state.user.updateProfile({ displayName: name })
     
     addPlayerToGame(gamesRef.child(state.game.id), state.user);
 
