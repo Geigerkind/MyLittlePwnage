@@ -30,6 +30,11 @@
 	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()"
             },
 
+            "type": {
+	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()",
+              ".validate": "newData.val() === 'pw' || newData.val() === 'amount'"
+            },
+
             "guesses": {
               "$uid": {
                 // allow to write own answeres as long as the question isn't finished                

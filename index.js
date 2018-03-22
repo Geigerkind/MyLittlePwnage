@@ -1,4 +1,5 @@
-import {render, html} from './node_modules/lit-html/lib/lit-extended.js'
+import {render, html} from './node_modules/lit-html/lib/lit-extended.js';
+
 const top10k = fetch("./top10k.json").then(res => res.json());
 
 const db = firebase.database();
@@ -19,11 +20,7 @@ const state = {
   },*/
   // the current game currently only set by createNewGame()
   game: {},
-  currentQuestion: {
-    question: '123400',
-    type: 'pw'
-  },
-  page: 'question',
+  page: 'index',
   players: {
     a: {
       displayName: "Malte",
@@ -48,8 +45,13 @@ function createNewGame(user) {
 
 function createNewQuestion(gameRef) {
   const ref = gameRef.child('questions').push();
+  ref.child('type').set("pw");
   ref.child('question').set(retrievePseudoRandomNumber());
   return ref;
+}
+
+function addPlayerToGame(gameRef, player) {
+  gameRef.child('players').child(player.uid).set(player.displayName);
 }
 
 function answerQuestion(questionRef, user, answer) {
@@ -99,6 +101,9 @@ function createGameListener(gameRef) {
   if (!state.game.questions) state.game.questions = {}
   if (!state.game.players) state.game.players = {}
 
+  console.log(gameRef)
+  console.log("HJEHAJKSHKj")
+
   state.game.id = gameRef.key;
 
   gameRef.child('questions').on('child_added', snap => {
@@ -126,6 +131,8 @@ function createQuestionListeners(questionRef, questionKey){
   // check if all objects exist
   if (!state.game.questions[questionKey].guesses) state.game.questions[questionKey].guesses = {};
   
+  state.game.currentQuestion = questionKey;
+
   questionRef.child('guesses').on('child_added', snap => {
     const guessKey = snap.key;
     const guessRef = snap.ref;
@@ -145,11 +152,15 @@ function createQuestionListeners(questionRef, questionKey){
       }
     });
   });
-  
+
   questionRef.child('question').on('value', snap => {
     state.game.questions[questionKey].question = snap.val();
   });
-  
+
+  questionRef.child('type').on('value', snap => {
+    state.game.questions[questionKey].type = snap.val();
+  });
+
   questionRef.child('finished').on('value', snap => {
     state.game.questions[questionKey].finished = snap.val();
   });
@@ -191,8 +202,6 @@ function logout() {
 firebase.auth().onAuthStateChanged(user => {
   if (user) {
     state.user = user;
-    state.game.ref = createNewGame(state.user);
-    createGameListener(state.game.ref);
   } else {
     console.log('logout')
   }
@@ -232,7 +241,10 @@ const renderPage = state => {
   switch(state.page){
     case 'index': return createGameTemplate(state);
     case 'question': 
-      switch(state.currentQuestion.type){
+      if(!state.questions) state.questions = {}
+      if (!state.questions[state.currentQuestion]) state.questions[state.currentQuestion] = {}
+
+      switch(state.questions[state.currentQuestion].type){
         case 'pw': return questionGuessPwTemplate(state);
         case 'amount': return questionGuessAmountTemplate(state);
       }
@@ -286,39 +298,75 @@ const enterGroupTemplate = state => html`
 <div class="button" on-click=${e => {
   const groupkey = document.getElementById('input-groupkey').value;
 
-  console.log(groupkey)
-
   createGameListener(gamesRef.child(groupkey))
+
+  state.page = "question";
+  rerender();
 }}>Enter group</div>
 `
 
 const setNameTemplate = state => html`
 <h1>Your group key is: </h1>
 <h1>${state.game.id}</h1>
-<input type="text" placeholder="Enter your name!" name="name" />
-<div class="button">Enter group</div>
+<input type="text" placeholder="Enter your name!" name="name" id="input-name" />
+<div class="button" on-click=${e => {
+  state.user.updateProfile({ displayName: document.getElementById("input-name").value })
+
+  addPlayerToGame(ref, user);
+
+  createNewGame(state.user);
+
+  state.page = "question";
+  rerender();
+}}>Enter group</div>
 `
 
 const createMPGameTemplate = state => html`
-<div class="button">Create group</div>
-<div class="button">Join group</div>
+<div class="button" on-click=${e => {
+  createNewGame(state.user)
+
+  createGameListener(gamesRef.child(groupkey))
+  
+  state.page = 'name'
+  rerender();
+}}>Create group</div>
+<div class="button" on-click=${e => {
+
+
+  state.page = "enter_group"
+  rerender();
+}}>Join group</div>
 `
 
 const createGameTemplate = state => html`
 <img height="200" width="200" src="https://derpicdn.net/img/2013/7/6/365909/full.png" />
 <h1>Ready to pwn?</h1>
-<div class="button">Singleplayer</div>
-<div class="button">Multiplayer</div>
+<div class="button" on-click=${e => {
+  if(!state.user){
+    anonLogin()
+  }
+
+  createNewGame(state.user)
+
+  createGameListener(gamesRef.child(groupkey))
+
+  state.page = 'name';
+  rerender();
+}}>Singleplayer</div>
+<div class="button" on-click=${e => {
+  state.page = 'create_mp';
+  rerender();
+}}>Multiplayer</div>
 `
 
 const questionGuessAmountTemplate = state => html`
-<h1>${state.currentQuestion.question}</h1>
+<h1>${state.questions[state.currentQuestion].question}</h1>
 <input type="text" placeholder="Leaked... times" name="input" />
 <div class="button">Submit</div>
 `
 
 const questionGuessPwTemplate = state => html`
-<h1>${state.currentQuestion.question}</h1>
+<h1>${state.questions[state.currentQuestion].question}</h1>
 <input type="text" placeholder="Guess password!" name="input" />
 <div class="button">Submit</div>
 `
