@@ -30,6 +30,10 @@
 	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()"
             },
 
+            "answer": {
+              ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()"
+            },
+
             "type": {
 	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()",
               ".validate": "newData.val() === 'pw' || newData.val() === 'amount'"
