@@ -1,5 +1,5 @@
 import {render, html} from './node_modules/lit-html/lib/lit-extended.js'
-
+const top10k = fetch("./top10k.json").then(res => res.json());
 
 const db = firebase.database();
 const auth = firebase.auth();
@@ -48,7 +48,7 @@ function createNewGame(user) {
 
 function createNewQuestion(gameRef) {
   const ref = gameRef.child('questions').push();
-  ref.child('question').set(createRandomPwAmount());
+  ref.child('question').set(retrievePseudoRandomNumber());
   return ref;
 }
 
@@ -146,8 +146,9 @@ function createQuestionListeners(questionRef, questionKey){
   });
 }
 
-function createRandomPwAmount() {
-  return '4' // TODO
+async function retrievePseudoRandomNumber(){
+  let index = Math.floor(Math.random() * 9999);
+  return getPasswordCount((await top10k).data[index]);
 }
 
 /**
