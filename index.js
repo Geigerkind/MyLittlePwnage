@@ -425,12 +425,16 @@ const setNameTemplate = state => html`
 <h1>${state.game.id}</h1>
 <input type="text" placeholder="Enter your name!" name="name" id="input-name" />
 <div class="button" on-click=${e => {
-  state.user.updateProfile({ displayName: document.getElementById("input-name").value })
-  
-  addPlayerToGame(gamesRef.child(state.game.id), state.user);
+  let name = document.getElementById("input-name").value;
+  if (name !== '')
+  {
+    state.user.updateProfile({ displayName: document.getElementById("input-name").value })
+    
+    addPlayerToGame(gamesRef.child(state.game.id), state.user);
 
-  state.page = "question";
-  rerender();
+    state.page = "question";
+    rerender();
+  }
 }}>Enter group</div>
 `
 
