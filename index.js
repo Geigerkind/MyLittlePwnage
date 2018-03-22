@@ -8,29 +8,10 @@ const auth = firebase.auth();
 const gamesRef = db.ref('games');
 
 const state = {
-  test: 'HELLO WORLD',
-  // will be set by the login
-  /*user: {
-    uid: '',
-    // only available if not anonymous
-    displayName: '',
-    photoURL: '',
-    // true if anonymous
-    isAnonymous: ''
-  },*/
   // the current game currently only set by createNewGame()
   game: {},
   page: 'index',
-  players: {
-    a: {
-      displayName: "Malte",
-      points: 123
-    },
-    b: {
-      displayName: "Tom",
-      points: 312
-    }
-  },
+  players: [],
   isCreator: true
 }
 
@@ -55,13 +36,12 @@ async function createNewQuestion(gameRef) {
 }
 
 function addPlayerToGame(gameRef, player) {
+  console.log(player.displayName)
+
   gameRef.child('players').child(player.uid).set(player.displayName);
 }
 
 function answerQuestion(questionRef, user, answer) {
-  console.log(user.uid)
-  console.log(answer)
-  console.log(questionRef)
   questionRef.child('guesses').child(user.uid).child('guess').set(answer);
 }
 
@@ -76,10 +56,8 @@ async function checkAnswer(answerRef, answer) {
 
 /**
  * gets the amount the password was in the breaches
- */
- 
-function getPasswordCount(password) 
-{
+ */ 
+function getPasswordCount(password) {
 	const path = "https://api.pwnedpasswords.com/pwnedpassword/" 
   let url = path + CryptoJS.SHA1(password).toString(); 
 	return fetch(url).then(res => res.json()).catch(error => 0);
@@ -87,6 +65,12 @@ function getPasswordCount(password)
 
 function getPoints(passwordCount, inputCount)
 {	
+  if(passwordCount < inputCount) {
+    const a = passwordCount;
+    passwordCount = inputCount;
+    inputCount = a;
+  }
+
   if (passwordCount == 0)
     return 0;
 
@@ -104,32 +88,30 @@ function getPoints(passwordCount, inputCount)
 function createGameListener(gameRef) {
   // create the necessary objects if they aren't there already
   if (!state.game.questions) state.game.questions = {}
-  if (!state.game.players) state.game.players = {}
-
-  console.log(gameRef)
-  console.log("HJEHAJKSHKj")
+  if (!state.game.players) state.game.players = []
 
   state.game.id = gameRef.key;
 
   gameRef.child('questions').on('child_added', snap => {
     state.game.questions[snap.key] = snap.val();
     createQuestionListeners(snap.ref, snap.key);
-  })
+  });
 
   gameRef.child('players').on('child_added', snap => {
     state.game.players.push({
-      name: snap.val(),
-      uid: snap.key
+      displayName: snap.val(),
+      uid: snap.key,
+      points: 0
     });
-  })
+  });
 
   gameRef.child('finished').on('value', snap => {
     state.game.finished = snap.val();
-  })
+  });
 
   gameRef.child('creator').on('value', snap => {
     state.game.creator = snap.val();
-  })
+  });
 }
 
 function createQuestionListeners(questionRef, questionKey){
@@ -148,6 +130,15 @@ function createQuestionListeners(questionRef, questionKey){
     
     snap.ref.child('amount').on('value', snap => {
       state.game.questions[questionKey].guesses[guessKey].amount = snap.val();
+
+      let pl = state.game.players.find(a => a.uid === guessKey);
+      
+      if(pl){
+    
+
+        pl.points += getPoints(state.game.questions[state.game.currentQuestion].question, snap.val())
+      }
+
       rerender();      
     });
     
@@ -162,8 +153,12 @@ function createQuestionListeners(questionRef, questionKey){
   });
 
   questionRef.child('question').on('value', snap => {
-    console.log(snap.val())
     state.game.questions[questionKey].question = snap.val();
+    rerender()    
+  });
+
+  questionRef.child('answer').on('value', snap => {
+    state.game.questions[questionKey].answer = snap.val();
   });
 
   questionRef.child('type').on('value', snap => {
@@ -177,8 +172,8 @@ function createQuestionListeners(questionRef, questionKey){
 
 async function retrievePseudoRandomNumber(){
   let index = Math.floor(Math.random() * 9999);
-  let pw =(await top10k).data[index];
-  return [pw, getPasswordCount(pw)];
+  let pw = (await top10k).data[index];
+  return [pw, await getPasswordCount(pw)];
 }
 
 /**
@@ -269,7 +264,7 @@ const renderPage = state => {
 }
 
 const winTemplate = (state) => html`
-<h1>${Object.values(state.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
+<h1>${Object.values(state.game.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
 <img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
 <div class="button" on-click=${(e) => { state.page = 'index'; }}>New game</div>`
 
@@ -283,10 +278,18 @@ const leaderboardTemplate = state => html`
         </tr>
     </thead>
     <tbody>
-      ${Object.values(state.players).sort((a,b) => b.points - a.points).map(pl => lederboardItemTemplate(pl))}
+      ${Object.values(state.game.players).sort((a,b) => b.points - a.points).map(pl => lederboardItemTemplate(pl))}
     </tbody>
 </table>
-<div class="button" on-click=${(e) => { state.page = 'question'; if (state.isCreator) { createNewQuestion(state.game.ref)} }}>Next round</div>
+<div class="button" on-click=${(e) => {
+  state.page = 'question';
+
+  if (state.isCreator) {
+    createNewQuestion(gamesRef.child(state.game.id))
+  }
+
+  rerender()
+}}>Next round</div>
 `
 
 const lederboardItemTemplate = (user) => html`
@@ -316,6 +319,7 @@ const imprintTemplate = state => html`
 <b><a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top10K.txt">Daniel Miessler</a></b>: Provided password lists.
 </div>
 `
+
 const answerTemplate = state => {
   if (!state.game.questions[state.game.currentQuestion].guesses) state.game.questions[state.game.currentQuestion].guesses = {};
   if (!state.game.questions[state.game.currentQuestion].guesses[state.user.uid]) state.game.questions[state.game.currentQuestion].guesses[state.user.uid] = {};
@@ -323,7 +327,7 @@ const answerTemplate = state => {
   const guess = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].guess;
   const amount = state.game.questions[state.game.currentQuestion].guesses[state.user.uid].amount;
   const questionAmount = state.game.questions[state.game.currentQuestion].question;
-  const answerPlain = state.game.question[state.game.currentQuestion].answer;
+  const answerPlain = state.game.questions[state.game.currentQuestion].answer;
 
   return html`
   <section>
@@ -360,8 +364,7 @@ const setNameTemplate = state => html`
   state.user.updateProfile({ displayName: document.getElementById("input-name").value })
   
   
-  let ref = createNewGame(state.user);
-  addPlayerToGame(ref, state.user);
+  addPlayerToGame(gamesRef.child(state.game.id), state.user);
 
   state.page = "question";
   rerender();
