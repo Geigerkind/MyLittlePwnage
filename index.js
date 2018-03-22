@@ -261,13 +261,14 @@ const renderPage = state => {
     case 'win': return winTemplate(state);
     case 'imprint': return imprintTemplate(state);
     case 'answer': return answerTemplate(state);
+    case 'loading': return loadingTemplate(state);
   }
 }
 
 const winTemplate = (state) => html`
 <h1>${Object.values(state.players).sort((a, b) => b.points - a.points)[0].displayName} wins!</h1>
 <img src="https://media3.giphy.com/media/SRO0ZwmImic0/giphy.gif" />
-<div class="button">New game</div>`
+<div class="button" on-click=${(e) => { state.page = 'index'; }}>New game</div>`
 
 const leaderboardTemplate = state => html`
 <h1>TOP H4ck3r:</h1>
@@ -296,6 +297,11 @@ const waitingTemplate = state => html`
 <!-- TODO: Random gifs here -->
 <img src="https://media.giphy.com/media/LiWsL77P4tA9a/giphy.gif" />
 <h1>Waiting for players...</h1>
+`
+
+const loadingTemplate = state => html`
+<img width="200" height="200" src="https://m.popkey.co/fe4ba7/DYALX.gif" />
+<h1>Loading...</h1>
 `
 
 const imprintTemplate = state => html`
