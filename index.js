@@ -254,6 +254,7 @@ const renderPage = state => {
     case 'leaderboard': return leaderboardTemplate(state);
     case 'win': return winTemplate(state);
     case 'imprint': return imprintTemplate(state);
+    case 'answer': return answerTemplate(state);
   }
 }
 
@@ -300,7 +301,18 @@ const imprintTemplate = state => html`
 <b><a href="https://github.com/danielmiessler/SecLists/blob/master/Passwords/darkweb2017-top10K.txt">Daniel Miessler</a></b>: Provided password lists.
 </div>
 `
-
+const answerTemplate = state => html`
+<section>
+<h1>The answer is: monkey</h1>
+<h1>monkey was leaked 23121 times</h1>
+<h1>answer was leaked 23232323 times </h1>
+<h1>You gained 2 points</h1>
+<div class="button" on-click=${e => {
+  state.page = 'leaderboard';
+  rerender();
+}}>View rankings</div>
+</section>
+`
 
 const enterGroupTemplate = state => html`
 <input type="text" placeholder="Enter your name!" name="name" id="input-username"/><br />
@@ -372,13 +384,19 @@ const createGameTemplate = state => html`
 const questionGuessAmountTemplate = state => html`
 <h1>${state.questions[state.currentQuestion].question}</h1>
 <input type="text" placeholder="Leaked... times" name="input" />
-<div class="button">Submit</div>
+<div class="button" on-click=${e => {
+  state.page = 'answer';
+  rerender();
+}}>Submit</div>
 `
 
 const questionGuessPwTemplate = state => html`
 <h1>${state.questions[state.currentQuestion].question}</h1>
 <input type="text" placeholder="Guess password!" name="input" />
-<div class="button">Submit</div>
+<div class="button" on-click=${e => {
+  state.page = 'answer';
+  rerender();
+}}>Submit</div>
 `
 
 function rerender(){
