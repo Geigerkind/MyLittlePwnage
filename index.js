@@ -40,13 +40,15 @@ const state = {
 function createNewGame(user) {
   const ref = gamesRef.push()
   ref.child('creator').set(user.uid);
+
+  createNewQuestion(ref);
   return ref;
 }
 
-function createNewQuestion(gameRef) {
+async function createNewQuestion(gameRef) {
   const ref = gameRef.child('questions').push();
   ref.child('type').set("pw");
-  ref.child('question').set(retrievePseudoRandomNumber());
+  ref.child('question').set(await retrievePseudoRandomNumber());
   return ref;
 }
 
@@ -154,6 +156,7 @@ function createQuestionListeners(questionRef, questionKey){
   });
 
   questionRef.child('question').on('value', snap => {
+    console.log(snap.val())
     state.game.questions[questionKey].question = snap.val();
   });
 
@@ -207,7 +210,6 @@ firebase.auth().onAuthStateChanged(user => {
   }
 
   rerender()
-  
 });
 
 const gameTemplate = (state) => html`
@@ -241,10 +243,10 @@ const renderPage = state => {
   switch(state.page){
     case 'index': return createGameTemplate(state);
     case 'question': 
-      if(!state.questions) state.questions = {}
-      if (!state.questions[state.currentQuestion]) state.questions[state.currentQuestion] = {}
+      if (!state.game.questions) state.game.questions = {}
+      if (!state.game.questions[state.game.currentQuestion]) state.game.questions[state.game.currentQuestion] = {}
 
-      switch(state.questions[state.currentQuestion].type){
+      switch (state.game.questions[state.game.currentQuestion].type){
         case 'pw': return questionGuessPwTemplate(state);
         case 'amount': return questionGuessAmountTemplate(state);
       }
@@ -311,10 +313,10 @@ const setNameTemplate = state => html`
 <input type="text" placeholder="Enter your name!" name="name" id="input-name" />
 <div class="button" on-click=${e => {
   state.user.updateProfile({ displayName: document.getElementById("input-name").value })
-
-  addPlayerToGame(ref, user);
-
-  createNewGame(state.user);
+  
+  
+  let ref = createNewGame(state.user);
+  addPlayerToGame(ref, state.user);
 
   state.page = "question";
   rerender();
@@ -323,9 +325,8 @@ const setNameTemplate = state => html`
 
 const createMPGameTemplate = state => html`
 <div class="button" on-click=${e => {
-  createNewGame(state.user)
-
-  createGameListener(gamesRef.child(groupkey))
+  const ref = createNewGame(state.user)
+  createGameListener(ref)
   
   state.page = 'name'
   rerender();
@@ -346,9 +347,9 @@ const createGameTemplate = state => html`
     anonLogin()
   }
 
-  createNewGame(state.user)
+  let gameref = createNewGame(state.user)
 
-  createGameListener(gamesRef.child(groupkey))
+  createGameListener(gameref)
 
   state.page = 'name';
   rerender();
@@ -360,13 +361,13 @@ const createGameTemplate = state => html`
 `
 
 const questionGuessAmountTemplate = state => html`
-<h1>${state.questions[state.currentQuestion].question}</h1>
+<h1>${state.game.questions[state.game.currentQuestion].question}</h1>
 <input type="text" placeholder="Leaked... times" name="input" />
 <div class="button">Submit</div>
 `
 
 const questionGuessPwTemplate = state => html`
-<h1>${state.questions[state.currentQuestion].question}</h1>
+<h1>${state.game.questions[state.game.currentQuestion].question}</h1>
 <input type="text" placeholder="Guess password!" name="input" />
 <div class="button">Submit</div>
 `
