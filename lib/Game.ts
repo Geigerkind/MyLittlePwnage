@@ -8,7 +8,7 @@ export class Game {
   private ref: Reference;
   public round: number = 0;
   public hackLastQuestion: number = 0;
-  public maxRounts: number = 10;
+  public maxRounds: number = 10;
   public currentQuestion: Question;
   public mode: number = 0;
   public questions: Set<Question> = new Set();
@@ -24,8 +24,6 @@ export class Game {
 
   public create(user: User) {
     this.ref.child('creator').set(user.uid);
-
-    user.displayName = '';
 
     this.addPlayer(user);
 
@@ -60,6 +58,8 @@ export class Game {
 
       const newQuestion = new Question(snap.ref, this);
 
+      newQuestion.createListeners()
+
       this.questions.add(newQuestion);
 
       newQuestion.done = true;
@@ -71,7 +71,7 @@ export class Game {
       const newPlayer = new User(snap.key);
       newPlayer.displayName = snap.val();
 
-      this.addPlayer(newPlayer);
+      this.players.add(newPlayer);
     });
 
     this.ref.child('finished').on('value', snap => {

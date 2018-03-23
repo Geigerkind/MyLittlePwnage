@@ -3,7 +3,7 @@ export class User {
   public displayName;
   public points = 0;
   
-  private originalUser;
+  public originalUser;
 
   constructor(uid) {
     this.uid = uid;

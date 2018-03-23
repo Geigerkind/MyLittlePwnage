@@ -62,17 +62,6 @@ export class Question {
     return this.ref.child('guesses').child(user.uid).child('ready').set(42);
   }
 
-  public async checkAnswer(user: User, answer) {
-    let count = 0;
-    if (this.mode === 0) {
-      count = await getPasswordCount(answer);
-    } else if (answer !== null && answer.length > 0 && !isNaN(answer)) {
-      count = parseInt(answer);
-    }
-
-    this.ref.child('quesses').child(user.uid).child('amount').set(count);
-  }
-
   createListeners() {
     this.game.currentQuestion = this;
 
@@ -84,22 +73,22 @@ export class Question {
     });
 
     this.ref.child('question').on('value', snap => {
-      this.question = snap.val();
+      this._question = snap.val();
       this.done = false;
       rerender()
     });
 
     this.ref.child('answer').on('value', snap => {
-      this.answer = snap.val();
+      this._answer = snap.val();
     });
 
     this.ref.child('type').on('value', snap => {
       const type = snap.val();
 
       if (type === "pw") {
-        this.mode = 0;
+        this._mode = 0;
       } else {
-        this.mode = 1;
+        this._mode = 1;
       }
 
       rerender()

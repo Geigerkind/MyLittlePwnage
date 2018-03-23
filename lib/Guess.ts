@@ -3,6 +3,7 @@ import { Question } from "./Question";
 import { rerender } from "./render";
 import { getPasswordCount } from "./logic";
 import { Reference } from "@firebase/database";
+import { state } from "./state";
 
 export class Guess {
   private ref: Reference;
@@ -15,6 +16,8 @@ export class Guess {
   constructor(ref: Reference, question: Question){
     this.ref = ref;
     this.question = question;
+
+    this.createListeners();
   }
 
   createListeners() {
@@ -31,7 +34,7 @@ export class Guess {
     this.ref.child('guess').on('value', snap => {
       this.guess = snap.val();
 
-      if (this.user.uid === this.question.game.creator.uid) {
+      if (state.user && state.user.uid === this.question.game.creator.uid) {
         this.check()
       }
 
