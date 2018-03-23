@@ -17,6 +17,9 @@ module.exports = {
       //  hash: true
     })
   ],
+  resolve: {
+    extensions: ['.js', '.json', '.ts', '.tsx'],
+  },
   module: {
     rules: [
       {
@@ -31,6 +34,10 @@ module.exports = {
           },
         ]
       },
+      { 
+        test: /\.tsx?$/, 
+        loader:'ts-loader'
+      }
     ]
   }
 };
