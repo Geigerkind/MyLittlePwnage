@@ -68,8 +68,10 @@ export class Question {
     this.ref.child('guesses').on('child_added', snap => {
       const guess = new Guess(snap.ref, this);
       guess.user = [... this.game.players].find(a => a.uid === snap.key);
-
+      
       this.guesses.set(guess.user.uid, guess);
+
+      guess.createListeners();
     });
 
     this.ref.child('question').on('value', snap => {

@@ -1,6 +1,6 @@
 import { Question } from "./Question";
 import { Reference } from "@firebase/database";
-import { rerender } from "./render";
+import { rerender, changePage } from "./render";
 import { state } from "./state";
 import { User } from "./User";
 
@@ -14,6 +14,7 @@ export class Game {
   public questions: Set<Question> = new Set();
   public players: Set<User> = new Set();
   public finished: boolean = false;
+  public started: boolean = false;
   public creator: User;
   
   constructor(ref) {
@@ -72,6 +73,10 @@ export class Game {
       newPlayer.displayName = snap.val();
 
       this.players.add(newPlayer);
+
+      if(state.page === 'name' && state.user.uid === newPlayer.uid){
+        changePage('question');
+      }
     });
 
     this.ref.child('finished').on('value', snap => {

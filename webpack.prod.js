@@ -25,7 +25,7 @@ module.exports = merge(common, {
     new Workbox.InjectManifest({
       swSrc: path.resolve('sw.js')
     }),
-    new FaviconsWebpackPlugin('lib/img/party_hard_by_wolferahm-d6c8oge.png'),
+    new FaviconsWebpackPlugin('./lib/img/party_hard_by_wolferahm-d6c8oge.png'),
     new WebpackPwaManifest({
       name: 'My Little Pwnage',
       short_name: 'My Pwnage',

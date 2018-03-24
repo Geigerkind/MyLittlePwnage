@@ -41,7 +41,7 @@ workbox.routing.registerRoute(
         maxEntries: 1000
       }),
       new workbox.cacheableResponse.Plugin({
-        statuses: 200,
+        statuses: [200],
       }),
     ],
   }),
@@ -73,7 +73,7 @@ workbox.routing.registerRoute(
         maxEntries: 100
       }),
       new workbox.cacheableResponse.Plugin({
-        statuses: 200,
+        statuses: [200],
       }),
     ],
   }),

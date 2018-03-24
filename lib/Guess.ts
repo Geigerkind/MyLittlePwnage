@@ -16,8 +16,6 @@ export class Guess {
   constructor(ref: Reference, question: Question){
     this.ref = ref;
     this.question = question;
-
-    this.createListeners();
   }
 
   createListeners() {
