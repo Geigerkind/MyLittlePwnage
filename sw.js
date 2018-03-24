@@ -1,15 +1,32 @@
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.0.0/workbox-sw.js');
-
 // load static stuff from cache but also update cache
 workbox.routing.registerRoute(
-  /\.(?:js|css|html)$/,
+  /\.(?:html)/,
   workbox.strategies.staleWhileRevalidate({
     cacheName: 'static-resources',
     plugins: [
       // if we later want to add a notification to reload the page when a new version of the app is
-      // there we can listen to this via `new BroadcastChannel('cache-update-static')`
-      new workbox.broadcastUpdate.Plugin('cache-update-static')
+      // there we can listen to this via `new BroadcastChannel('cache-update-index')`
+      new workbox.broadcastUpdate.Plugin('cache-update-index')
     ]
+  }),
+);
+
+workbox.routing.registerRoute(
+  /\.(?:html)$/,
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'static-resources',
+    plugins: [
+      // if we later want to add a notification to reload the page when a new version of the app is
+      // there we can listen to this via `new BroadcastChannel('cache-update-index')`
+      new workbox.broadcastUpdate.Plugin('cache-update-index')
+    ]
+  }),
+);
+
+workbox.routing.registerRoute(
+  /\.(?:js|css|png|gif|json)$/,
+  workbox.strategies.cacheFirst({
+    cacheName: 'static-resources',
   }),
 );
 
@@ -46,5 +63,24 @@ workbox.routing.registerRoute(
   }),
 );
 
+workbox.routing.registerRoute(
+  'https://media.giphy.com/*',
+  workbox.strategies.cacheFirst({
+    cacheName: 'gifs',
+    plugins: [
+      new workbox.expiration.Plugin({
+        // only is a status code + number so we can cache a lot of these
+        maxEntries: 100
+      }),
+      new workbox.cacheableResponse.Plugin({
+        statuses: 200,
+      }),
+    ],
+  }),
+);
+
 // offline analytics
 workbox.googleAnalytics.initialize();
+
+workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
+workbox.precaching.suppressWarnings();
