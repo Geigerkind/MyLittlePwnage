@@ -1,0 +1,47 @@
+{
+  "icons": [
+    {
+      "src": "icon_1024x1024.451fe857222c0b24c37850138682fcf8.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_512x512.34ad82984bdf62f7db50f84e7636197f.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_384x384.99312ecbf0d3e4731c5161b15ef5f2c1.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_256x256.3cdae7506044e2324a13e798e626c021.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_192x192.98331c87c56da2cb4de9a3cbf26399df.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_128x128.9957aaa166e3e7bea0f8dae8206d9969.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icon_96x96.df15e6122067b59ff2ba8416cfdc1324.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ],
+  "name": "My Little Pwnage",
+  "short_name": "My Pwnage",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": "/index.html?utm=homescreen",
+  "description": "Guess the amount of times a password was pwned!",
+  "theme_color": "#303030",
+  "background_color": "#303030"
+}

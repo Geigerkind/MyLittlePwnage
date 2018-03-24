@@ -1,9 +1,258 @@
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
-<html>
+<html lang="en-US" >
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta content="ie=edge" http-equiv="x-ua-compatible">
+
+    
+
+    
+      
+      <meta name="description" content="Guess the amount of times a password was pwned!">
+      
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      
+    
+
     <title>MyLittlePwnage</title>
-  <link href="app.styles.6b5b2c184c28f517384f35e25517a8ac.css" rel="stylesheet"></head>
+
+    
+
+    
+
+    
+
+    
+    
+      
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-107735472-2"></script>
+      <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag('js', new Date());
+
+          window.GA_TRACKING_ID = 'UA-107735472-2';
+
+          gtag('config', window.GA_TRACKING_ID);
+      </script>
+
+      <style>
+      body{
+    color: #e1f2f5;
+    line-height: 1.4;
+    font-size: 14px;
+    font-family: Arial !important;
+    background-color: rgba(0,0,0,.81);
+    margin: 0;
+    padding: 0;
+}
+
+header{
+    background:rgba(0,0,0,.51);
+
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 50px;
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0;
+
+}
+
+header div{
+    float: left;
+    height: 50px;
+    padding: 5px 10px 0 10px;
+    cursor: pointer;
+}
+
+main{
+    margin-top: 50px;
+    width: 100%;
+    min-height: 300px;
+    text-align: center;
+}
+
+section{
+    width: 100%;
+    min-height: 300px;
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 2px 3px 0;
+    padding-bottom: 200px;
+    padding-top: 100px;
+}
+
+.button{
+    background-color: rgba(0,0,0,.51);
+    
+    height: 50px;
+    min-width: 100px;
+    max-width: 300px;
+    border-radius: 3px 3px 3px 3px;
+    font-size: 24px;
+    line-height: 50px;
+    margin: 10px auto;
+
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
+}
+
+input{
+    background-color: rgba(0,0,0,.51);
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
+    width: 280px;
+    height: 50px;
+
+    border: 1px solid #ccc;
+    font-size: 18px;
+    padding: 0 10px 0 10px;
+    color: #e1f2f5;
+    margin-top: 10px;
+}
+
+.button:hover{
+    cursor: pointer;
+}
+
+h1{
+	font-size: 28px;
+	font-style: normal;
+	font-variant: normal;
+	font-weight: 400;
+    line-height: 28px;
+
+    max-width: 300px;
+    min-width: 100px;
+    margin: 30px auto;
+    margin-bottom: 50px;
+}
+
+footer{
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    padding-top: 25px;
+    line-height: 35px;
+    font-size: 18px;
+}
+
+footer a{
+    margin: 0 10px 0 10px;
+}
+
+a:active, a:visited, a:link{
+    text-decoration: none;
+    color: #e1f2f5;
+}
+
+a:hover{
+    text-decoration: none;
+    color: #f28f45;
+}
+
+table{
+    width: 300px;
+    border-spacing: 0;
+    font-size: 16px;
+
+    margin: -20px auto;
+    margin-bottom: 10px;
+
+    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0 inset;
+}
+
+section:nth-child(2)
+{
+    padding-top: 200px;
+    padding-bottom: 0px;
+}
+
+table tr{
+    width: 100px;
+    height: 30px;
+}
+
+table thead{
+    background-color:rgba(0,0,0,.5);
+}
+
+table tr:nth-child(even){
+    background-color:rgba(0,0,0,.3);
+}
+table tr:nth-child(odd){
+    background-color:rgba(0,0,0,.05);
+}
+
+.container{
+    width: 300px;
+    margin: 0 auto;
+}
+
+.container h1{
+    margin-bottom: 5px;
+}
+
+#mode-button{
+    font-size: 20px;
+}
+
+#title{
+    line-height: 40px;
+    font-size: 24px;
+}</style>
+      
+    
+  <meta name="theme-color" content="#303030" /><link rel="manifest" href="manifest.7c4507eb1ed2fb290ba9d986f6c1c481.json" /><link rel="apple-touch-icon" sizes="57x57" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-180x180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="mylittlepwnage"><link rel="icon" type="image/png" sizes="32x32" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon-16x16.png"><link rel="shortcut icon" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon.ico"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#fff"><meta name="application-name" content="mylittlepwnage"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-320x460.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-640x920.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-640x1096.png"><link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-750x1294.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1182x2208.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1242x2148.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-748x1024.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-768x1004.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1496x2048.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1536x2008.png"></head>
   <body>
-  <script type="text/javascript" src="app.bundle.12cec4fe1be3d93d1740.js"></script></body>
+    
+    
+      
+       <header>
+        <div>
+            <a href="javascript:void(0);">
+                <img height="40" width="40" title="MyLittlePwnage" />
+            </a>
+        </div>
+        <div id="title">MyLittlePwnage</div>
+    </header>
+    <main>
+        <section>
+            <img height="200" width="200"/>
+            <h1>Ready to pwn?</h1>
+            <div class="button">Singleplayer</div>
+            <div class="button">Multiplayer</div>
+            <div class="button" id="mode-button">Mode: Number => Password</div>
+        </section>
+    </main>
+    <footer>
+        <a href="javascript:void(0);">Imprint</a>
+    </footer>
+      
+    
+    
+    
+
+    
+
+    
+        
+    
+
+    
+
+    
+    
+    <script src="app.bundle.1f34d0524f14d7ec16c8.js" type="text/javascript"></script>
+    
+    
+
+    
+
+    
+  </body>
 </html>
