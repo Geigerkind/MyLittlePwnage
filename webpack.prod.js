@@ -4,6 +4,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const Workbox = require('workbox-webpack-plugin');
 const SubResourceIntegrityPlugin = require('webpack-subresource-integrity');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const common = require('./webpack.common.js');
 
@@ -33,6 +34,8 @@ module.exports = merge(common, {
     new Workbox.GenerateSW({
       clientsClaim: true,
       skipWaiting: true
-    })
+    }),
+    new BundleAnalyzerPlugin()
+
   ]
 });
