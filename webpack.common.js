@@ -194,7 +194,11 @@ table tr:nth-child(odd){
 .trivia {
     font-size: 16px;
     padding: 20px;
-}</style>
+}
+video {
+    max-width: 100%;
+}
+</style>
       `,
       bodyHtmlSnippet: `
        <header>
