@@ -6,7 +6,6 @@ import { User } from "./User";
 
 export class Game {
   private ref: database.Reference;
-  public round: number = 0;
   public hackLastQuestion: number = 0;
   public maxRounds: number = 10;
   public currentQuestion: Question;
@@ -21,6 +20,10 @@ export class Game {
     this.ref = ref;
 
     this.createListeners();
+  }
+
+  get round(){
+    return this.questions.size;
   }
 
   public create(user: User) {
@@ -54,7 +57,6 @@ export class Game {
   createListeners() {
     this.ref.child('questions').on('child_added', snap => {
       if (state.page === 'leaderboard') {
-        ++this.round;
         state.page = 'question';
       }
 
