@@ -1,11 +1,11 @@
 import { Question } from "./Question";
-import { Reference } from "@firebase/database";
+import { database } from "firebase";
 import { rerender, changePage } from "./render";
 import { state } from "./state";
 import { User } from "./User";
 
 export class Game {
-  private ref: Reference;
+  private ref: database.Reference;
   public round: number = 0;
   public hackLastQuestion: number = 0;
   public maxRounds: number = 10;

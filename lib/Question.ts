@@ -1,4 +1,4 @@
-import { Reference } from "@firebase/database/dist/esm/src/api/Reference";
+import { database } from "firebase";
 import { retrievePseudoRandomNumber, getPasswordCount } from "./logic";
 import { User } from "./User";
 import { Game } from "./Game";
@@ -7,7 +7,7 @@ import { Guess } from "./Guess";
 
 export class Question {
   private _mode: number = 0;
-  private ref: Reference;
+  private ref: database.Reference;
   public done: boolean = false;
   public finished: boolean = false;
   private _answer;

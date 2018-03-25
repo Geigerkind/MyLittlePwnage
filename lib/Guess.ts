@@ -2,18 +2,18 @@ import { User } from "./User";
 import { Question } from "./Question";
 import { rerender } from "./render";
 import { getPasswordCount } from "./logic";
-import { Reference } from "@firebase/database";
+import { database } from "firebase";
 import { state } from "./state";
 
 export class Guess {
-  private ref: Reference;
+  private ref: database.Reference;
   public amount;
   public guess;
   public ready: boolean = false;
   public user: User;
   private question: Question;
 
-  constructor(ref: Reference, question: Question){
+  constructor(ref: database.Reference, question: Question){
     this.ref = ref;
     this.question = question;
   }

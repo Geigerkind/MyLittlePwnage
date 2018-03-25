@@ -28,26 +28,28 @@ module.exports = {
           gtag('config', window.GA_TRACKING_ID);
       </script>
 
-      <style>
-      body{
+      <style>* {
+    box-sizing: border-box;
+}
+
+body{
     color: #e1f2f5;
     line-height: 1.4;
-    font-size: 14px;
+    font-size: 18px;
     font-family: Arial !important;
     background-color: rgba(0,0,0,.81);
     margin: 0;
     padding: 0;
+    flex-direction: column;
+    height: 100vh;
+    display: flex;
 }
 
 header{
     background:rgba(0,0,0,.51);
-
-    position: absolute;
-    top: 0;
     width: 100%;
     height: 50px;
-    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0;
-
+    box-shadow: rgba(0,0,0,0) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0;
 }
 
 header div{
@@ -58,18 +60,17 @@ header div{
 }
 
 main{
-    margin-top: 50px;
     width: 100%;
-    min-height: 300px;
     text-align: center;
+    overflow: auto;
+    flex-grow: 1;
 }
 
 section{
     width: 100%;
     min-height: 300px;
-    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 2px 3px 0;
-    padding-bottom: 200px;
-    padding-top: 100px;
+    padding-top: 30px;
+    padding-bottom: 10px;
 }
 
 .button{
@@ -117,12 +118,12 @@ h1{
 }
 
 footer{
-    height: 50px;
     width: 100%;
     text-align: center;
-    padding-top: 25px;
     line-height: 35px;
     font-size: 18px;
+    box-shadow: rgba(0, 0, 0, .8) 0 -2px 3px 0;
+    padding: 10px 0;
 }
 
 footer a{
@@ -188,6 +189,11 @@ table tr:nth-child(odd){
 #title{
     line-height: 40px;
     font-size: 24px;
+}
+
+.trivia {
+    font-size: 16px;
+    padding: 20px;
 }</style>
       `,
       bodyHtmlSnippet: `
