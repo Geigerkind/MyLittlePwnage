@@ -36,7 +36,6 @@
 
             "type": {
 	            ".write": "!data.exists() && auth.uid === data.parent().parent().parent().child('creator').val() && !data.parent().parent().parent().child('finished').exists()",
-              ".validate": "newData.val() === 'pw' || newData.val() === 'amount'"
             },
 
             "guesses": {
@@ -52,7 +51,7 @@
                   ".write": "auth.uid === data.parent().parent().parent().parent().parent().child('creator').val() && !data.exists()",
                   ".validate": "newData.isNumber()"
                 },
-
+                  
                 "ready": {
                   ".write": true
                 }
@@ -90,6 +89,11 @@
         "finished": {
           ".write": "auth.uid === data.parent().child('creator').val() && !data.exists()",
           ".validate": "newData.val() === true"
+        },
+        
+        // the creator can set the mode of the game
+        "mode": {
+          ".write": "auth.uid === data.parent().child('creator').val()"
         },
 
         // no other data

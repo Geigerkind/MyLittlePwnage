@@ -47,7 +47,8 @@ module.exports = merge(common, {
     new WebpackAutoInject({
       components: {
         AutoIncreaseVersion: false,
-        InjectByTag: true
+        InjectByTag: true,
+        InjectAsComment: false
       },
       componentsOptions: {
         InjectByTag: {
