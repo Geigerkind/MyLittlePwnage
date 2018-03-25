@@ -8,6 +8,7 @@ const SubResourceIntegrityPlugin = require('webpack-subresource-integrity');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const WebpackAutoInject = require('webpack-auto-inject-version')
 
 const common = require('./webpack.common.js');
 
@@ -23,7 +24,8 @@ module.exports = merge(common, {
       'process.env.NODE_ENV': JSON.stringify('production')
     }),
     new Workbox.InjectManifest({
-      swSrc: path.resolve('sw.js')
+      swSrc: path.resolve('sw.js'),
+      exclude: [/\.map$/, /^manifest.*\.js(?:on)?$/, /^icon/]
     }),
     new FaviconsWebpackPlugin('./lib/img/party_hard_by_wolferahm-d6c8oge.png'),
     new WebpackPwaManifest({
@@ -41,6 +43,17 @@ module.exports = merge(common, {
           sizes: [96, 128, 192, 256, 384, 512, 1024] // multiple sizes
         }
       ]
+    }),
+    new WebpackAutoInject({
+      components: {
+        AutoIncreaseVersion: false,
+        InjectByTag: true
+      },
+      componentsOptions: {
+        InjectByTag: {
+          dateFormat: 'UTC:yyyy-mm-dd HH:MM:ss Z'
+        }
+      },
     })
  //   new BundleAnalyzerPlugin()
 

@@ -69,6 +69,12 @@ export class Question {
       const guess = new Guess(snap.ref, this);
       guess.user = [... this.game.players].find(a => a.uid === snap.key);
       
+      if(!guess.user){
+        const user = new User(snap.key)
+        this.game.addPlayer(user);
+        guess.user = user;
+      }
+
       this.guesses.set(guess.user.uid, guess);
 
       guess.createListeners();

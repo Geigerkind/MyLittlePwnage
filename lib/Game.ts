@@ -59,22 +59,28 @@ export class Game {
 
       const newQuestion = new Question(snap.ref, this);
 
+      newQuestion.done = true;
+      
       newQuestion.createListeners()
 
       this.questions.add(newQuestion);
 
-      newQuestion.done = true;
 
       rerender();
     });
 
     this.ref.child('players').on('child_added', snap => {
-      const newPlayer = new User(snap.key);
-      newPlayer.displayName = snap.val();
+      let user = [... this.players].find(a => a.uid === snap.key);
 
-      this.players.add(newPlayer);
+      if(!user) {
+        user = new User(snap.key);
+        
+        this.players.add(user);
+      }
 
-      if(state.page === 'name' && state.user.uid === newPlayer.uid){
+      user.displayName = snap.val();
+
+      if(state.page === 'name' && state.user.uid === user.uid){
         changePage('question');
       }
     });

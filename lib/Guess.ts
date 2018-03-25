@@ -22,9 +22,7 @@ export class Guess {
     this.ref.child('amount').on('value', snap => {
       this.amount = snap.val();
 
-      if (this.user) {
-        this.user.addPoints(this.getPoints());
-      }
+      this.user.addPoints(this.getPoints());
 
       rerender();
     });
