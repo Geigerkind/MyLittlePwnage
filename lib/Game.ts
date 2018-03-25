@@ -25,6 +25,7 @@ export class Game {
 
   public create(user: User) {
     this.ref.child('creator').set(user.uid);
+    this.ref.child('mode').set(this.mode);
 
     this.addPlayer(user);
 
@@ -60,7 +61,7 @@ export class Game {
       const newQuestion = new Question(snap.ref, this);
 
       newQuestion.done = true;
-      
+
       newQuestion.createListeners()
 
       this.questions.add(newQuestion);
@@ -87,6 +88,10 @@ export class Game {
 
     this.ref.child('finished').on('value', snap => {
       this.finished = snap.val();
+    });
+
+    this.ref.child('mode').on('value', snap => {
+      this.mode = snap.val();
     });
 
     this.ref.child('creator').on('value', snap => {
