@@ -44,26 +44,28 @@
           gtag('config', window.GA_TRACKING_ID);
       </script>
 
-      <style>
-      body{
+      <style>* {
+    box-sizing: border-box;
+}
+
+body{
     color: #e1f2f5;
     line-height: 1.4;
-    font-size: 14px;
+    font-size: 18px;
     font-family: Arial !important;
     background-color: rgba(0,0,0,.81);
     margin: 0;
     padding: 0;
+    flex-direction: column;
+    height: 100vh;
+    display: flex;
 }
 
 header{
     background:rgba(0,0,0,.51);
-
-    position: absolute;
-    top: 0;
     width: 100%;
     height: 50px;
-    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0;
-
+    box-shadow: rgba(0,0,0,0) 0 1px 0,rgba(0,0,0,.8) 0 1px 7px 0;
 }
 
 header div{
@@ -74,18 +76,17 @@ header div{
 }
 
 main{
-    margin-top: 50px;
     width: 100%;
-    min-height: 300px;
     text-align: center;
+    overflow: auto;
+    flex-grow: 1;
 }
 
 section{
     width: 100%;
     min-height: 300px;
-    box-shadow: rgba(255,255,255,.1) 0 1px 0,rgba(0,0,0,.8) 0 2px 3px 0;
-    padding-bottom: 200px;
-    padding-top: 100px;
+    padding-top: 30px;
+    padding-bottom: 10px;
 }
 
 .button{
@@ -133,12 +134,12 @@ h1{
 }
 
 footer{
-    height: 50px;
     width: 100%;
     text-align: center;
-    padding-top: 25px;
     line-height: 35px;
     font-size: 18px;
+    box-shadow: rgba(0, 0, 0, .8) 0 -2px 3px 0;
+    padding: 10px 0;
 }
 
 footer a{
@@ -204,7 +205,16 @@ table tr:nth-child(odd){
 #title{
     line-height: 40px;
     font-size: 24px;
-}</style>
+}
+
+.trivia {
+    font-size: 16px;
+    padding: 20px;
+}
+video {
+    max-width: 100%;
+}
+</style>
       
     
   <meta name="theme-color" content="#303030" /><link rel="manifest" href="manifest.7c4507eb1ed2fb290ba9d986f6c1c481.json" /><link rel="apple-touch-icon" sizes="57x57" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-icon-180x180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="mylittlepwnage"><link rel="icon" type="image/png" sizes="32x32" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon-32x32.png"><link rel="icon" type="image/png" sizes="16x16" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon-16x16.png"><link rel="shortcut icon" href="icons-0ed29dc07116aa254c9ce161cbc963e8/favicon.ico"><meta name="mobile-web-app-capable" content="yes"><meta name="theme-color" content="#fff"><meta name="application-name" content="mylittlepwnage"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-320x460.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-640x920.png"><link rel="apple-touch-startup-image" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-640x1096.png"><link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-750x1294.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 3)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1182x2208.png"><link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 3)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1242x2148.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-748x1024.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 1)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-768x1004.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: landscape) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1496x2048.png"><link rel="apple-touch-startup-image" media="(device-width: 768px) and (device-height: 1024px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="icons-0ed29dc07116aa254c9ce161cbc963e8/apple-touch-startup-image-1536x2008.png"></head>
@@ -247,7 +257,7 @@ table tr:nth-child(odd){
 
     
     
-    <script src="app.bundle.1f34d0524f14d7ec16c8.js" type="text/javascript"></script>
+    <script src="app.bundle.162bb5253bd110d1a936.js" type="text/javascript"></script>
     
     
 

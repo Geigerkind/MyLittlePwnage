@@ -12,18 +12,6 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  /\.(?:html)$/,
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'static-resources',
-    plugins: [
-      // if we later want to add a notification to reload the page when a new version of the app is
-      // there we can listen to this via `new BroadcastChannel('cache-update-index')`
-      new workbox.broadcastUpdate.Plugin('cache-update-index')
-    ]
-  }),
-);
-
-workbox.routing.registerRoute(
   /\.(?:js|css|png|gif|json)$/,
   workbox.strategies.cacheFirst({
     cacheName: 'static-resources',
@@ -84,3 +72,6 @@ workbox.googleAnalytics.initialize();
 
 workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
+
+workbox.skipWaiting();
+workbox.clientsClaim();

@@ -1,20 +1,8 @@
-importScripts("precache-manifest.cdf365d857bf032a71562c061a4337c8.js", "https://storage.googleapis.com/workbox-cdn/releases/3.0.0/workbox-sw.js");
+importScripts("precache-manifest.7fcd44953bbd60453bc58f02b775c9af.js", "https://storage.googleapis.com/workbox-cdn/releases/3.0.0/workbox-sw.js");
 
 // load static stuff from cache but also update cache
 workbox.routing.registerRoute(
   /\.(?:html)/,
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'static-resources',
-    plugins: [
-      // if we later want to add a notification to reload the page when a new version of the app is
-      // there we can listen to this via `new BroadcastChannel('cache-update-index')`
-      new workbox.broadcastUpdate.Plugin('cache-update-index')
-    ]
-  }),
-);
-
-workbox.routing.registerRoute(
-  /\.(?:html)$/,
   workbox.strategies.staleWhileRevalidate({
     cacheName: 'static-resources',
     plugins: [
@@ -86,3 +74,6 @@ workbox.googleAnalytics.initialize();
 
 workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
+
+workbox.skipWaiting();
+workbox.clientsClaim();
