@@ -1,7 +1,7 @@
 // load static stuff from cache but also update cache
 workbox.routing.registerRoute(
   /\.(?:html)/,
-  workbox.strategies.staleWhileRevalidate({
+  workbox.strategies.networkFirst({
     cacheName: 'static-resources',
     plugins: [
       // if we later want to add a notification to reload the page when a new version of the app is
