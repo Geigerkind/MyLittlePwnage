@@ -30,7 +30,7 @@ export class Guess {
     this.ref.child('guess').on('value', snap => {
       this.guess = snap.val();
 
-      if (state.user && && this.question.game.creator && state.user.uid === this.question.game.creator.uid) {
+      if (state.user && this.question.game.creator && state.user.uid === this.question.game.creator.uid) {
         this.check()
       }
 
@@ -74,6 +74,6 @@ export class Guess {
       return Math.round(100 * percentage)
     }
 
-    return 100;
+    return -1;
   }
 }

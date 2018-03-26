@@ -14,6 +14,7 @@ export class Question {
   private _question;
   private guesses: Map<string, Guess> = new Map();
   public game: Game;
+  private awaitingGuesses = new Set();
 
   constructor(ref, game: Game) {
     this.ref = ref;
@@ -77,11 +78,18 @@ export class Question {
 
       this.guesses.set(guess.user.uid, guess);
 
-      guess.createListeners();
+      if(!this._question){
+        this.awaitingGuesses.add(guess);
+      }else{
+        guess.createListeners();
+      }
     });
 
     this.ref.child('question').on('value', snap => {
       this._question = snap.val();
+
+      this.awaitingGuesses.forEach(guess => guess.createListeners());
+
       this.done = false;
       rerender()
     });
