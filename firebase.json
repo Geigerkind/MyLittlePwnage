@@ -2,11 +2,7 @@
   "database": {
     "rules": "database.rules.json"
   },
-  "functions": {
-    "predeploy": "npm --prefix functions run build"
-  },
   "hosting": {
-    "predeploy": "npm run build",
     "public": "docs",
     "ignore": [
       "firebase.json",
@@ -17,6 +13,26 @@
       {
         "source": "**",
         "destination": "/index.html"
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|js)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
       }
     ]
   }
