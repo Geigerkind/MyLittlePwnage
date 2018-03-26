@@ -71,7 +71,7 @@ export class Question {
       
       if(!guess.user){
         const user = new User(snap.key)
-        this.game.addPlayer(user);
+        this.game.players.add(user);
         guess.user = user;
       }
 
