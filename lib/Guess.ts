@@ -57,6 +57,10 @@ export class Guess {
   getPoints(){
     let amountA = this.amount;
     let amountB = this.question.question;
+    
+    if (amountA == amountB) {
+      return 100;
+    }
 
     if (amountA < amountB) {
       const a = amountA;
@@ -64,9 +68,6 @@ export class Guess {
       amountB = a;
     }
 
-    if (amountA == 0) {
-      return 0;
-    }
 
     const percentage = Math.log(1 + (amountB / amountA) * (Math.E - 1));
 
