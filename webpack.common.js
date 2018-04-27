@@ -25,7 +25,7 @@ module.exports = {
 
           window.GA_TRACKING_ID = 'UA-107735472-2';
 
-          gtag('config', window.GA_TRACKING_ID);
+          gtag('config', window.GA_TRACKING_ID, { 'anonymize_ip': true });
       </script>
 
       <style>* {
